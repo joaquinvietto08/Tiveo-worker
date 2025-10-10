@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, TouchableOpacity, Image, FlatList } from "react-native";
+import { View, Text, TouchableOpacity, FlatList } from "react-native";
 import { styles } from "./ServicesStyles";
 import { servicesData } from "../../../../utils/servicesData"; // ajustá ruta también
 import { translateService } from "../../../../utils/formatHelpers";
@@ -48,8 +48,15 @@ const Services = ({ workerData, setWorkerData, onBack, onFinish }) => {
 
   return (
     <View style={styles.services__mainContainer}>
-      <Text style={styles.services__title}>Categorías de servicio</Text>
-      <Text style={styles.services__subtitle}>
+      <Text style={styles.services__title}>Crear perfil de trabajador</Text>
+      <Text style={styles.services__step}>Paso 4 de 4</Text>
+
+      <View style={styles.services__progressContainer}>
+        <View style={styles.services__progressBar} />
+      </View>
+
+      <Text style={styles.services__sectionTitle}>Categorías de servicio</Text>
+      <Text style={styles.services__sectionSubtitle}>
         Selecciona los servicios que ofreces
       </Text>
 

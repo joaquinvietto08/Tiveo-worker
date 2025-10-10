@@ -84,7 +84,7 @@ export const styles = StyleSheet.create({
     backgroundColor: colors.black,
     borderRadius: 8,
     paddingVertical: 14,
-    paddingHorizontal: 70,
+    paddingHorizontal: 65,
   },
   photo__buttonText: {
     color: colors.white,
