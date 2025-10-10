@@ -73,7 +73,7 @@ export const styles = StyleSheet.create({
     borderColor: colors.black,
     borderRadius: 8,
     paddingVertical: 12,
-    paddingHorizontal: 30,
+    paddingHorizontal: 35,
   },
   photo__backButtonText: {
     color: colors.black,
