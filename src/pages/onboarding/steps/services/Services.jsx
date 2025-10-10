@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { View, Text, TouchableOpacity, Image, FlatList } from "react-native";
 import { styles } from "./ServicesStyles";
-import { getIcon } from "../../../../utils/getIcons"; // ajustá ruta según tu estructura real
 import { servicesData } from "../../../../utils/servicesData"; // ajustá ruta también
 import { translateService } from "../../../../utils/formatHelpers";
 
@@ -23,7 +22,6 @@ const Services = ({ workerData, setWorkerData, onBack, onFinish }) => {
 
   const renderService = ({ item }) => {
     const isSelected = selected.includes(item.name);
-    const iconSrc = getIcon(item.name);
     const label = translateService(item.name) || item.name;
 
     return (
@@ -35,16 +33,6 @@ const Services = ({ workerData, setWorkerData, onBack, onFinish }) => {
         onPress={() => handleToggle(item.name)}
         activeOpacity={0.8}
       >
-        {iconSrc && (
-          <Image
-            source={iconSrc}
-            style={[
-              styles.services__icon,
-              isSelected && styles.services__iconSelected,
-            ]}
-            resizeMode="contain"
-          />
-        )}
         <Text
           style={[
             styles.services__label,

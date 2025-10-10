@@ -37,7 +37,6 @@ const Info = ({ workerData, setWorkerData, onNext }) => {
 
             <Text style={styles.info__label}>Nombre</Text>
             <TextInput
-              placeholder="Ej: Juan"
               value={workerData.name}
               onChangeText={(text) => setWorkerData({ ...workerData, name: text })}
               style={styles.info__input}
@@ -46,7 +45,6 @@ const Info = ({ workerData, setWorkerData, onNext }) => {
 
             <Text style={styles.info__label}>Apellido</Text>
             <TextInput
-              placeholder="Ej: Pérez"
               value={workerData.lastName}
               onChangeText={(text) =>
                 setWorkerData({ ...workerData, lastName: text })
@@ -57,7 +55,7 @@ const Info = ({ workerData, setWorkerData, onNext }) => {
 
             <Text style={styles.info__label}>Nombre de trabajador</Text>
             <TextInput
-              placeholder="Ej: JuanElectricista"
+              placeholder="Ej: Juan Electricista"
               value={workerData.workerName}
               onChangeText={(text) =>
                 setWorkerData({ ...workerData, workerName: text })
