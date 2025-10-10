@@ -2,6 +2,7 @@ import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Onboarding from "../pages/onboarding/Onboarding";
+import Home from "../pages/home/Home";
 
 const Stack = createNativeStackNavigator();
 
@@ -16,7 +17,8 @@ const Root = () => {
         }}
       >
         <>
-          <Stack.Screen name="Onboarding" component={Onboarding} />
+          {/*<Stack.Screen name="Onboarding" component={Onboarding} />*/}
+          <Stack.Screen name="Home" component={Home} />
         </>
       </Stack.Navigator>
     </NavigationContainer>
