@@ -6,7 +6,7 @@ import { UserContext } from "../../../../../context/UserContext";
 
 const Requests = () => {
   const [selectedImage, setSelectedImage] = useState(null);
-  const { activity, requests } = useContext(UserContext);
+  const { requests } = useContext(UserContext); // solo requests, no activities
 
   const getServiceIcon = (service) => {
     switch (service) {
@@ -52,16 +52,17 @@ const Requests = () => {
     );
   };
 
-  const renderCard = (item, isActivity) => {
+  const renderCard = (item) => {
     const hasDescription = item.description && item.description.trim() !== "";
     const services = item.services || [];
     const hasServices = services.length > 0;
     const hasImage = item.images && item.images.length > 0;
 
+    // Diferenciar acción según el tipo de request
     const buttonLabel =
-      isActivity && item.status === "pending"
+      item.type === "direct"
         ? "Aceptar trabajo"
-        : !isActivity && item.status === "requested"
+        : item.type === "open"
         ? "Postularse"
         : null;
 
@@ -148,8 +149,7 @@ const Requests = () => {
       contentContainerStyle={styles.requests__container}
       showsVerticalScrollIndicator={false}
     >
-      {activity.map((item) => renderCard(item, true))}
-      {requests.map((item) => renderCard(item, false))}
+      {requests.map((item) => renderCard(item))}
 
       <Modal visible={!!selectedImage} transparent animationType="fade">
         <View style={styles.requests__modalOverlay}>

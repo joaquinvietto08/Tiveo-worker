@@ -1,20 +1,29 @@
-import React from "react";
+import React, { useContext } from "react";
 import { View, Text, TouchableOpacity } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { styles } from "./CompletedStyles";
+import { UserContext } from "../../../../../context/UserContext";
 
-const Completed = ({ completed = [] }) => {
-  if (!completed.length) {
+const Completed = () => {
+  const { activities } = useContext(UserContext);
+
+  const completeActivities = activities.filter(
+    (item) => item.status === "cancelled" && item.status === "done"
+  );
+
+  if (!completeActivities.length) {
     return (
       <View style={styles.completed__emptyContainer}>
-        <Text style={styles.completed__emptyText}>Aún no tienes trabajos completados</Text>
+        <Text style={styles.completed__emptyText}>
+          Aún no tienes trabajos completados
+        </Text>
       </View>
     );
   }
 
   return (
     <View style={styles.completed__container}>
-      {completed.map((item) => {
+      {completeActivities.map((item) => {
         const services = item.services || [];
         const hasServices = services.length > 0;
 
@@ -38,7 +47,11 @@ const Completed = ({ completed = [] }) => {
               <View style={styles.completed__chipsRow}>
                 {services.map((srv, index) => (
                   <View key={index} style={styles.completed__chip}>
-                    <MaterialCommunityIcons name="leaf" size={16} color="#000" />
+                    <MaterialCommunityIcons
+                      name="leaf"
+                      size={16}
+                      color="#000"
+                    />
                     <Text style={styles.completed__chipText}>
                       {srv.charAt(0).toUpperCase() + srv.slice(1)}
                     </Text>
@@ -54,7 +67,9 @@ const Completed = ({ completed = [] }) => {
               </Text>
 
               <TouchableOpacity style={styles.completed__detailsButton}>
-                <Text style={styles.completed__detailsButtonText}>Ver detalles</Text>
+                <Text style={styles.completed__detailsButtonText}>
+                  Ver detalles
+                </Text>
               </TouchableOpacity>
             </View>
           </View>

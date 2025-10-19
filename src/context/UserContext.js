@@ -1,38 +1,48 @@
-// UserContext.js
 import React, { useState, useEffect, createContext } from "react";
-import { getFirestore, collection, onSnapshot } from "firebase/firestore";
+import {
+  getFirestore,
+  collection,
+  onSnapshot,
+  query,
+  where,
+  orderBy,
+} from "firebase/firestore";
 import { FIREBASE_APP } from "../config/firebaseConfig";
 
 export const UserContext = createContext();
 
 export function UserProvider({ children }) {
-  const [activity, setActivity] = useState([]);
+  const [activities, setActivities] = useState([]);
   const [requests, setRequests] = useState([]);
 
   useEffect(() => {
     const db = getFirestore(FIREBASE_APP);
 
-    // --- Escucha la colección "activity"
-    const unsubscribeActivity = onSnapshot(collection(db, "activity"), (snapshot) => {
+    // --- Escucha la colección "activities"
+    const unsubscribeActivity = onSnapshot(collection(db, "activities"), (snapshot) => {
       const data = snapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
       }));
-      console.log("📦 Datos de activity:", data);
-      setActivity(data);
+      setActivities(data);
     });
 
-    // --- Escucha la colección "request"
-    const unsubscribeRequests = onSnapshot(collection(db, "request"), (snapshot) => {
+    // --- Escucha la colección "requests" excepto las cerradas
+    const requestsQuery = query(
+      collection(db, "requests"),
+      where("status", "!=", "closed"),
+      orderBy("status")
+    );
+
+    const unsubscribeRequests = onSnapshot(requestsQuery, (snapshot) => {
       const data = snapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
       }));
-      console.log("📨 Datos de request:", data);
       setRequests(data);
     });
 
-    // Cleanup de ambos listeners
+    // Cleanup
     return () => {
       unsubscribeActivity();
       unsubscribeRequests();
@@ -40,7 +50,7 @@ export function UserProvider({ children }) {
   }, []);
 
   return (
-    <UserContext.Provider value={{ activity, requests }}>
+    <UserContext.Provider value={{ activities, requests }}>
       {children}
     </UserContext.Provider>
   );

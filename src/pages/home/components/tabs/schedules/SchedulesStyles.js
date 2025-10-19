@@ -9,7 +9,6 @@ export const styles = StyleSheet.create({
   schedules__container: {
     paddingHorizontal: 16,
     paddingBottom: 32,
-    paddingTop: 8,
   },
   schedules__card: {
     backgroundColor: colors.white,

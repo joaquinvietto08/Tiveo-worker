@@ -1,12 +1,39 @@
 import React, { useState, useContext } from "react";
-import { View, Text, TouchableOpacity, Image, ScrollView, Modal } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Image,
+  ScrollView,
+  Modal,
+} from "react-native";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { styles } from "./SchedulesStyles";
 import { UserContext } from "../../../../../context/UserContext";
 
 const Schedules = () => {
   const [selectedImage, setSelectedImage] = useState(null);
-  const { scheduled } = useContext(UserContext);
+  const { activities } = useContext(UserContext);
+
+  const activeActivities = activities.filter(
+    (item) => item.status !== "done" && item.status !== "cancelled"
+  );
+
+  // 🔽 Ordenar por prioridad
+  const sortedActivities = [...activeActivities].sort((a, b) => {
+    // 1️⃣ Prioridad: trabajos "now"
+    if (a.moment === "now" && b.moment !== "now") return -1;
+    if (a.moment !== "now" && b.moment === "now") return 1;
+
+    // 2️⃣ Si ambos son "scheduled", ordenar por fecha más próxima
+    if (a.moment === "scheduled" && b.moment === "scheduled") {
+      const dateA = new Date(a.scheduledDateTime || 0);
+      const dateB = new Date(b.scheduledDateTime || 0);
+      return dateA - dateB;
+    }
+
+    return 0;
+  });
 
   const getServiceIcon = (service) => {
     switch (service) {
@@ -41,7 +68,9 @@ const Schedules = () => {
         </Text>
 
         {/* Cliente */}
-        <Text style={styles.schedules__client}>{item.user?.displayName || "Usuario desconocido"}</Text>
+        <Text style={styles.schedules__client}>
+          {item.user?.displayName || "Usuario desconocido"}
+        </Text>
 
         {/* Dirección */}
         <Text style={styles.schedules__sectionLabel}>Dirección</Text>
@@ -91,7 +120,9 @@ const Schedules = () => {
         {/* Botones */}
         <View style={styles.schedules__buttonsRow}>
           <TouchableOpacity style={styles.schedules__buttonDetails}>
-            <Text style={styles.schedules__buttonDetailsText}>Ver detalles</Text>
+            <Text style={styles.schedules__buttonDetailsText}>
+              Ver detalles
+            </Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.schedules__buttonMessage}>
@@ -108,10 +139,12 @@ const Schedules = () => {
       contentContainerStyle={styles.schedules__container}
       showsVerticalScrollIndicator={false}
     >
-      {scheduled?.length > 0 ? (
-        scheduled.map((item) => renderCard(item))
+      {sortedActivities?.length > 0 ? (
+        sortedActivities.map((item) => renderCard(item))
       ) : (
-        <Text style={styles.schedules__emptyText}>No hay trabajos programados</Text>
+        <Text style={styles.schedules__emptyText}>
+          No hay trabajos programados
+        </Text>
       )}
 
       {/* Modal de preview imagen (por si lo necesitás más adelante) */}
@@ -122,7 +155,10 @@ const Schedules = () => {
             onPress={() => setSelectedImage(null)}
             activeOpacity={1}
           >
-            <Image source={{ uri: selectedImage }} style={styles.schedules__modalImage} />
+            <Image
+              source={{ uri: selectedImage }}
+              style={styles.schedules__modalImage}
+            />
           </TouchableOpacity>
         </View>
       </Modal>

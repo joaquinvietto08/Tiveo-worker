@@ -5,7 +5,6 @@ export const styles = StyleSheet.create({
   completed__container: {
     paddingHorizontal: 16,
     paddingBottom: 32,
-    paddingTop: 8,
   },
 
   completed__card: {

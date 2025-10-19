@@ -6,9 +6,10 @@ import { styles } from "./HomeStyles";
 import { colors } from "../../styles/globalStyles";
 import State from "./components/state/State";
 import Stats from "./components/stats/Stats";
-import Resquests from "./components/tabs/requests/Requests";
 import Tabs from "./components/tabs/Tabs";
 import Schedules from "./components/tabs/schedules/Schedules";
+import Completed from "./components/tabs/completed/Completed";
+import Requests from "./components/tabs/requests/Requests";
 
 const Home = () => {
   const insets = useSafeAreaInsets();
@@ -45,13 +46,11 @@ const Home = () => {
         )}
         <Stats jobs={0} rating={null} earnings={0} />
         <Tabs activeTab={activeTab} setActiveTab={setActiveTab} />
-        {activeTab === "Solicitudes" ? (
-          <Resquests />
-        ) : activeTab === "Programadas" ? (
-          <Schedules />
-        ) : (
-          <></>
-        )}
+        {{
+          Solicitudes: <Requests />,
+          Programadas: <Schedules />,
+          Completadas: <Completed />,
+        }[activeTab] || null}
       </ScrollView>
     </View>
   );

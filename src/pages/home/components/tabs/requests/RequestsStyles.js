@@ -117,7 +117,7 @@ export const styles = StyleSheet.create({
     flex: 1,
     borderWidth: 1,
     borderColor: colors.lightGray,
-    borderRadius: 30,
+    borderRadius: 10,
     paddingVertical: 10,
     alignItems: "center",
     marginRight: 8,
@@ -129,7 +129,7 @@ export const styles = StyleSheet.create({
   requests__buttonAccept: {
     flex: 1,
     backgroundColor: colors.black,
-    borderRadius: 30,
+    borderRadius: 10,
     paddingVertical: 10,
     alignItems: "center",
   },
