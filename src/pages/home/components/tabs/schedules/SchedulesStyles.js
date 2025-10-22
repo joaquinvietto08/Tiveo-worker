@@ -28,9 +28,8 @@ export const styles = StyleSheet.create({
     fontFamily: "Inter-Bold",
   },
   schedules__title__italic: {
-    fontStyle: "italic",
     color: colors.gray,
-    fontFamily: "Inter-Regular",
+    fontFamily: "Inter-Italic",
   },
   schedules__client: {
     color: colors.black,

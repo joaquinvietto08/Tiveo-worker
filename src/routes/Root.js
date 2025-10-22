@@ -4,6 +4,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import * as NavigationBar from "expo-navigation-bar";
 import Onboarding from "../pages/onboarding/Onboarding";
 import Home from "../pages/home/Home";
+import JobApply from "../pages/jobApply/JobApply";
 
 const Stack = createNativeStackNavigator();
 
@@ -20,6 +21,7 @@ const Root = () => {
         <>
           {/*<Stack.Screen name="Onboarding" component={Onboarding} />*/}
           <Stack.Screen name="Home" component={Home} />
+          <Stack.Screen name="JobApply" component={JobApply} />
         </>
       </Stack.Navigator>
     </NavigationContainer>

@@ -1,10 +1,19 @@
 import React, { useState, useContext } from "react";
-import { View, Text, TouchableOpacity, Image, Modal, ScrollView } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Image,
+  Modal,
+  ScrollView,
+} from "react-native";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { styles } from "./RequestsStyles";
 import { UserContext } from "../../../../../context/UserContext";
+import { useNavigation } from "@react-navigation/native";
 
 const Requests = () => {
+  const navigation = useNavigation();
   const [selectedImage, setSelectedImage] = useState(null);
   const { requests } = useContext(UserContext); // solo requests, no activities
 
@@ -135,7 +144,10 @@ const Requests = () => {
             <Text style={styles.requests__buttonRejectText}>Rechazar</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.requests__buttonAccept}>
+          <TouchableOpacity
+            style={styles.requests__buttonAccept}
+            onPress={() => navigation.navigate("JobApply", { job: item })}
+          >
             <Text style={styles.requests__buttonAcceptText}>{buttonLabel}</Text>
           </TouchableOpacity>
         </View>
@@ -158,7 +170,10 @@ const Requests = () => {
             onPress={() => setSelectedImage(null)}
             activeOpacity={1}
           >
-            <Image source={{ uri: selectedImage }} style={styles.requests__modalImage} />
+            <Image
+              source={{ uri: selectedImage }}
+              style={styles.requests__modalImage}
+            />
           </TouchableOpacity>
         </View>
       </Modal>

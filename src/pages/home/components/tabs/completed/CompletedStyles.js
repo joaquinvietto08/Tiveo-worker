@@ -2,7 +2,9 @@ import { StyleSheet } from "react-native";
 import { colors } from "../../../../../styles/globalStyles";
 
 export const styles = StyleSheet.create({
-  completed__container: {
+  completed__mainContainer: {
+    flex: 1,
+    backgroundColor: colors.background,
     paddingHorizontal: 16,
     paddingBottom: 32,
   },
@@ -24,6 +26,7 @@ export const styles = StyleSheet.create({
     fontWeight: "600",
     color: colors.black,
     marginBottom: 8,
+    fontFamily: "Inter-Normal",
   },
 
   // --- Chips ---
@@ -38,7 +41,7 @@ export const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 6,
-    backgroundColor: "#F2F2F2",
+    backgroundColor: colors.lightGray,
     paddingHorizontal: 10,
     paddingVertical: 6,
     borderRadius: 10,
@@ -47,6 +50,7 @@ export const styles = StyleSheet.create({
   completed__chipText: {
     fontSize: 13,
     color: colors.black,
+    fontFamily: "Inter-Normal",
   },
 
   // --- Bottom ---
@@ -60,6 +64,7 @@ export const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "700",
     color: colors.black,
+    fontFamily: "Inter-Normal",
   },
 
   completed__detailsButton: {
@@ -74,6 +79,7 @@ export const styles = StyleSheet.create({
     fontSize: 14,
     color: colors.black,
     fontWeight: "500",
+    fontFamily: "Inter-Normal",
   },
 
   // --- Empty state ---
@@ -88,5 +94,6 @@ export const styles = StyleSheet.create({
     fontSize: 15,
     color: colors.gray,
     fontStyle: "italic",
+    fontFamily: "Inter-Normal",
   },
 });

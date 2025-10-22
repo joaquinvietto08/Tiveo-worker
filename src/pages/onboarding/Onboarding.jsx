@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { styles } from "./OnboardingStyles";
-
 import Info from "./steps/info/Info";
 import Photo from "./steps/photo/Photo";
 import Description from "./steps/description/Description";
