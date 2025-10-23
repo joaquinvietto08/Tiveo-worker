@@ -10,6 +10,13 @@ import {
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { styles } from "./SchedulesStyles";
 import { UserContext } from "../../../../../context/UserContext";
+import {
+  getFirestore,
+  doc,
+  updateDoc,
+  serverTimestamp,
+} from "firebase/firestore";
+import { FIREBASE_APP } from "../../../../../config/firebaseConfig";
 
 const Schedules = () => {
   const [selectedImage, setSelectedImage] = useState(null);
@@ -18,6 +25,19 @@ const Schedules = () => {
   const activeActivities = activities.filter(
     (item) => item.status !== "done" && item.status !== "cancelled"
   );
+
+  const handleStartJob = async (activityId) => {
+    try {
+      const db = getFirestore(FIREBASE_APP);
+      const activityRef = doc(db, "activities", activityId);
+      await updateDoc(activityRef, {
+        status: "starting",
+      });
+      console.log(`✅ Trabajo ${activityId} marcado como "starting"`);
+    } catch (error) {
+      console.error("❌ Error al actualizar estado:", error);
+    }
+  };
 
   // 🔽 Ordenar por prioridad
   const sortedActivities = [...activeActivities].sort((a, b) => {
@@ -125,8 +145,13 @@ const Schedules = () => {
             </Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.schedules__buttonMessage}>
-            <Text style={styles.schedules__buttonMessageText}>Mensajes</Text>
+          <TouchableOpacity
+            style={styles.schedules__buttonStart}
+            onPress={() => handleStartJob(item.id)}
+          >
+            <Text style={styles.schedules__buttonStartText}>
+              Comenzar trabajo
+            </Text>
           </TouchableOpacity>
         </View>
       </View>

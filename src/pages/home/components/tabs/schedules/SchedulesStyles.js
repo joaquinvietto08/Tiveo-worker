@@ -101,26 +101,26 @@ export const styles = StyleSheet.create({
     marginTop: 8,
   },
   schedules__buttonDetails: {
-    flex: 1,
     borderWidth: 1,
     borderColor: colors.lightGray,
     borderRadius: 10,
     paddingVertical: 10,
     alignItems: "center",
     marginRight: 8,
+    width: "40%"
   },
   schedules__buttonDetailsText: {
     color: colors.black,
     fontFamily: "Inter-Medium",
   },
-  schedules__buttonMessage: {
-    flex: 1,
+  schedules__buttonStart: {
     backgroundColor: "#FFA500",
     borderRadius: 10,
     paddingVertical: 10,
+    width: "60%",
     alignItems: "center",
   },
-  schedules__buttonMessageText: {
+  schedules__buttonStartText: {
     color: colors.white,
     fontFamily: "Inter-SemiBold",
   },

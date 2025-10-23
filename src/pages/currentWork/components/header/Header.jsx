@@ -19,7 +19,7 @@ const Header = ({ status }) => {
           <MaterialIcons name="arrow-back" size={24} color="#000" />
         </TouchableOpacity>
         <Text style={styles.currentWork__header__title}>
-          {status === "confirm" ? "Proximo trabajo" : "Trabajo activo"}
+          {status === "confirm"  || status === "starting" ? "Próximo trabajo" : "Trabajo activo"}
         </Text>
       </View>
 

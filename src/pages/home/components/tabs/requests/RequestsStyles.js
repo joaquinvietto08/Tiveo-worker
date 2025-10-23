@@ -30,6 +30,7 @@ export const styles = StyleSheet.create({
   requests__title__italic: {
     fontStyle: "italic",
     color: colors.gray,
+    fontSize: 16,
     fontFamily: "Inter-Regular",
   },
   requests__client: {

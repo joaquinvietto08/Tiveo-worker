@@ -78,6 +78,12 @@ const Buttons = ({ activity }) => {
           icon: "directions-walk",
           color: "#4E73DF",
         };
+      case "starting":
+        return {
+          text: "Marcar como en camino",
+          icon: "directions-walk",
+          color: "#4E73DF",
+        };
       case "going":
         return {
           text: "Marcar como trabajando",
@@ -101,7 +107,7 @@ const Buttons = ({ activity }) => {
 
   const actionData = getActionButtonData();
   const canGoBack =
-    activity.status !== "confirm" && activity.status !== "requested";
+    activity.status !== "confirm" && activity.status !== "starting";
 
   return (
     <View style={styles.currentWork__buttons__container}>
