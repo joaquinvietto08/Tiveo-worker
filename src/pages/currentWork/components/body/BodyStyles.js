@@ -1,0 +1,93 @@
+import { StyleSheet } from "react-native";
+import { colors } from "../../../../styles/globalStyles";
+
+export const styles = StyleSheet.create({
+  currentWork__body__container: {
+    backgroundColor: colors.white,
+    marginHorizontal: 16,
+    marginTop: 30,
+    borderRadius: 16,
+    paddingHorizontal: 18,
+    elevation: 2,
+    paddingVertical: 20,
+  },
+  currentWork__body__title: {
+    fontFamily: "Inter-Bold",
+    fontSize: 17,
+    color: colors.black,
+    marginBottom: 6,
+  },
+  currentWork__body__clientRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    borderTopWidth: 1,
+    borderBottomWidth: 1,
+    borderColor: colors.lightGray,
+    paddingVertical: 12,
+    marginTop: 6,
+    marginBottom: 10,
+  },
+  currentWork__body__clientName: {
+    fontFamily: "Inter-Bold",
+    fontSize: 15,
+    color: colors.black,
+  },
+  currentWork__body__clientLabel: {
+    fontFamily: "Inter-Normal",
+    fontSize: 13,
+    color: colors.gray,
+  },
+  currentWork__body__callButton: {
+    width: 38,
+    height: 38,
+    borderRadius: 19,
+    backgroundColor: colors.green,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  currentWork__body__section: {
+    marginTop: 10,
+  },
+  currentWork__body__sectionTitle: {
+    fontFamily: "Inter-Bold",
+    fontSize: 13,
+    color: colors.gray,
+    marginBottom: 6,
+  },
+  currentWork__body__sectionBox: {
+    backgroundColor: colors.background,
+    borderRadius: 10,
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  currentWork__body__sectionText: {
+    fontFamily: "Inter-Normal",
+    fontSize: 14,
+    color: colors.black,
+    marginLeft: 6,
+  },
+  currentWork__body__servicesRow: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 8,
+  },
+  currentWork__body__serviceTag: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: colors.white,
+    borderWidth: 1,
+    borderColor: colors.lightGray,
+    borderRadius: 8,
+    paddingVertical: 4,
+    paddingHorizontal: 8,
+  },
+  currentWork__body__serviceText: {
+    fontFamily: "Inter-Normal",
+    fontSize: 14,
+    color: colors.black,
+    marginLeft: 4,
+  },
+});

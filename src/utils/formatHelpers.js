@@ -66,8 +66,7 @@ export const translateStatus = (status, moment) => {
   if (status === "confirm") {
     if (moment === "scheduled") {
       return "Programado";
-    }
-    if (moment === "now") {
+    } else {
       return "Confirmado";
     }
   }

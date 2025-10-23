@@ -116,7 +116,7 @@ export function UserProvider({ children }) {
   }, []);
 
   return (
-    <UserContext.Provider value={{ user, activities, requests, postulations }}>
+    <UserContext.Provider value={{ user, activities, requests, postulations, setActivities }}>
       {children}
     </UserContext.Provider>
   );

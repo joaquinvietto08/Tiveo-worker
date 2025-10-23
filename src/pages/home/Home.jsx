@@ -10,8 +10,9 @@ import Tabs from "./components/tabs/Tabs";
 import Schedules from "./components/tabs/schedules/Schedules";
 import Completed from "./components/tabs/completed/Completed";
 import Requests from "./components/tabs/requests/Requests";
+import CurrentWorkCard from "./components/currentWorkCard/CurrentWorkCard";
 
-const Home = () => {
+const Home = ({ navigation }) => {
   const insets = useSafeAreaInsets();
   const [showModal, setShowModal] = useState(false);
   const [status, setStatus] = useState("Activo");
@@ -28,7 +29,7 @@ const Home = () => {
       <StatusBar backgroundColor={colors.white} translucent={false} />
       <ScrollView
         showsVerticalScrollIndicator={false}
-        stickyHeaderIndices={[3]} // 👈 el índice de Tabs dentro del ScrollView
+        stickyHeaderIndices={[4]} // 👈 el índice de Tabs dentro del ScrollView
         contentContainerStyle={styles.home__scrollContent}
       >
         <Header />
@@ -45,6 +46,11 @@ const Home = () => {
           />
         )}
         <Stats jobs={0} rating={null} earnings={0} />
+        <CurrentWorkCard
+          onPress={(activityId) =>
+            navigation.navigate("CurrentWork", { activityId })
+          }
+        />
         <Tabs activeTab={activeTab} setActiveTab={setActiveTab} />
         {{
           Solicitudes: <Requests />,
