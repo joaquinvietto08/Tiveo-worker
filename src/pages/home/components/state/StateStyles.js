@@ -54,9 +54,9 @@ export const styles = StyleSheet.create({
     marginLeft: 6,
     fontFamily: "Inter-Normal",
   },
-  home__state__chipText__active: { color: "#00B383", fontWeight: "600" },
-  home__state__chipText__busy: { color: "#E6A600", fontWeight: "600" },
-  home__state__chipText__inactive: { color: "#BC0000", fontWeight: "600" },
+  home__state__chipText__active: { color: "#00B383", fontFamily: "Inter-Medium" },
+  home__state__chipText__busy: { color: "#E6A600", fontFamily: "Inter-Medium" },
+  home__state__chipText__inactive: { color: "#BC0000", fontFamily: "Inter-Medium" },
 
   // --- CHIP DE UBICACIÓN ---
   home__state__locationChip: {

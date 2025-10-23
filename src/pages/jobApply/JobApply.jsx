@@ -1,5 +1,12 @@
 import React, { useState } from "react";
-import { View, Text, TouchableOpacity, StatusBar } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StatusBar,
+  Modal,
+  ActivityIndicator,
+} from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { styles } from "./JobApplyStyles";
 import { colors } from "../../styles/globalStyles";
@@ -23,6 +30,7 @@ const JobApply = ({ route, navigation }) => {
   const [message, setMessage] = useState("");
   const [date, setDate] = useState(new Date());
   const [offerAnotherTime, setOfferAnotherTime] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const postulationData = usePostulationValues(
     job,
@@ -35,17 +43,18 @@ const JobApply = ({ route, navigation }) => {
   const handleSubmit = async () => {
     try {
       const db = getFirestore(FIREBASE_APP);
-      console.log("🧱 Datos a guardar:", postulationData);
+      setIsSubmitting(true);
 
       await addDoc(collection(db, "postulations"), {
         ...postulationData,
         createdAt: serverTimestamp(),
       });
 
-      console.log("✅ Postulación enviada correctamente");
       navigation.goBack();
     } catch (error) {
       console.error("❌ Error al enviar postulación:", error);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -101,6 +110,17 @@ const JobApply = ({ route, navigation }) => {
           </TouchableOpacity>
         </View>
       </KeyboardAwareScrollView>
+
+      <Modal visible={isSubmitting} transparent animationType="fade" statusBarTranslucent>
+        <View style={styles.jobApply__loadingModal__overlay}>
+          <View style={styles.jobApply__loadingModal__container}>
+            <ActivityIndicator size="large" color={colors.primary} />
+            <Text style={styles.jobApply__loadingModal__text}>
+              Enviando postulación...
+            </Text>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 };

@@ -23,8 +23,8 @@ export const styles = StyleSheet.create({
   },
   state__modal__title: {
     fontSize: 16,
-    fontWeight: "700",
     color: colors.black,
+    fontFamily: "Inter-Bold"
   },
   state__modal__option: {
     flexDirection: "row",
@@ -43,6 +43,6 @@ export const styles = StyleSheet.create({
   },
   state__modal__optionLeft: { flexDirection: "row", alignItems: "center", gap: 10 },
   state__modal__dot: { width: 12, height: 12, borderRadius: 6 },
-  state__modal__optionLabel: { fontSize: 15, fontWeight: "600", color: colors.black },
+  state__modal__optionLabel: { fontSize: 15, fontFamily: "Inter-Medium", color: colors.black },
   state__modal__optionDesc: { fontSize: 13, color: colors.gray },
 });

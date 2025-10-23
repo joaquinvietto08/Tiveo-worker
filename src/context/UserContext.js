@@ -14,6 +14,7 @@ export const UserContext = createContext();
 export function UserProvider({ children }) {
   const [activities, setActivities] = useState([]);
   const [requests, setRequests] = useState([]);
+  const [postulations, setPostulations] = useState([]);
 
   // --- Usuario hardcodeado ---
   const user = {
@@ -39,44 +40,83 @@ export function UserProvider({ children }) {
   };
 
   useEffect(() => {
+    if (!user?.uid) {
+      setActivities([]);
+      return;
+    }
+
     const db = getFirestore(FIREBASE_APP);
 
     // --- Escucha la colección "activities"
     const unsubscribeActivity = onSnapshot(
       collection(db, "activities"),
       (snapshot) => {
-        const data = snapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-        setActivities(data);
+        const activitiesData = snapshot.docs.map((doc) => {
+          const data = doc.data();
+          return {
+            id: doc.id,
+            ...data,
+            createdAt: data?.createdAt?.toDate?.() || null,
+            scheduledDateTime: data?.scheduledDateTime?.toDate?.() || null,
+            startedAt: data?.startedAt?.toDate?.() || null,
+          };
+        });
+        setActivities(activitiesData);
       }
     );
 
     // --- Escucha la colección "requests" excepto las cerradas
     const requestsQuery = query(
       collection(db, "requests"),
-      where("status", "!=", "closed"),
+      where("status", "not-in", ["closed", "rejected"]),
       orderBy("status")
     );
 
     const unsubscribeRequests = onSnapshot(requestsQuery, (snapshot) => {
-      const data = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
-      setRequests(data);
+      const requestsData = snapshot.docs.map((doc) => {
+        const data = doc.data();
+        return {
+          id: doc.id,
+          ...data,
+          scheduledDateTime: data?.scheduledDateTime?.toDate?.() || null,
+        };
+      });
+
+      setRequests(requestsData);
     });
+
+    // --- Escucha las postulaciones del trabajador actual (no rechazadas)
+    const postulationsQuery = query(
+      collection(db, "postulations"),
+      where("worker.uid", "==", user.uid)
+    );
+
+    const unsubscribePostulations = onSnapshot(
+      postulationsQuery,
+      (snapshot) => {
+        const postulationsData = snapshot.docs.map((doc) => {
+          const data = doc.data();
+          return {
+            id: doc.id,
+            ...data,
+            createdAt: data?.createdAt?.toDate?.() || null,
+            date: data?.date?.toDate?.() || null,
+          };
+        });
+        setPostulations(postulationsData);
+      }
+    );
 
     // Cleanup
     return () => {
       unsubscribeActivity();
       unsubscribeRequests();
+      unsubscribePostulations();
     };
   }, []);
 
   return (
-    <UserContext.Provider value={{ user, activities, requests }}>
+    <UserContext.Provider value={{ user, activities, requests, postulations }}>
       {children}
     </UserContext.Provider>
   );

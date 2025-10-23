@@ -28,7 +28,7 @@ export const styles = StyleSheet.create({
     marginTop: 10,
     gap: 20,
     alignItems: "center",
-    paddingBottom: 40
+    paddingBottom: 40,
   },
 
   jobApply__buttonCancel: {
@@ -55,12 +55,40 @@ export const styles = StyleSheet.create({
     paddingVertical: 12,
     alignItems: "center",
     backgroundColor: colors.black,
-    width: "100%"
+    width: "100%",
   },
 
   jobApply__buttonSubmitText: {
     fontSize: 15,
     color: colors.white,
     fontFamily: "Inter-SemiBold",
+    alignSelf: "stretch",
+    textAlign: "center",
+  },
+
+  jobApply__loadingModal__overlay: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.3)",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
+  jobApply__loadingModal__container: {
+    backgroundColor: "rgba(255,255,255,0.9)",
+    padding: 24,
+    borderRadius: 16,
+    alignItems: "center",
+    justifyContent: "center",
+    shadowColor: "#000",
+    shadowOpacity: 0.2,
+    shadowRadius: 10,
+    elevation: 5,
+  },
+
+  jobApply__loadingModal__text: {
+    marginTop: 12,
+    fontSize: 16,
+    color: colors.black,
+    fontFamily: "Inter-Regular",
   },
 });

@@ -16,10 +16,11 @@ export const buildPostulationValues = (
     lastName: user.lastName,
     photoURL: user.photoURL,
   },
+  status: "postulated",
   budget,
   message,
   offerAnotherTime,
-  date: offerAnotherTime ? date.toISOString() : "",
+  date: offerAnotherTime ? date : "",
 });
 
 export const usePostulationValues = (job, budget, message, date, offerAnotherTime) => {

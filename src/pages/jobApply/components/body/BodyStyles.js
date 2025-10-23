@@ -4,10 +4,9 @@ import { colors } from "../../../../styles/globalStyles";
 export const styles = StyleSheet.create({
     jobApply__body__sectionTitle: {
     fontSize: 15,
-    fontWeight: "600",
     color: colors.black,
     marginBottom: 6,
-    fontFamily: "Inter-Normal",
+    fontFamily: "Inter-Medium",
   },
   jobApply__body__inputRow: {
     flexDirection: "row",
@@ -24,7 +23,7 @@ export const styles = StyleSheet.create({
     fontSize: 16,
     color: colors.black,
     marginRight: 4,
-    fontWeight: "600",
+    fontFamily: "Inter-Medium"
   },
 
   jobApply__body__input: {

@@ -15,46 +15,59 @@ export const styles = StyleSheet.create({
     padding: 16,
     marginBottom: 14,
     shadowColor: "#000",
-    shadowOpacity: 0.06,
-    shadowRadius: 6,
-    shadowOffset: { width: 0, height: 2 },
     elevation: 2,
   },
 
   completed__dateText: {
-    fontSize: 15,
-    fontWeight: "600",
+    fontSize: 16,
     color: colors.black,
     marginBottom: 8,
-    fontFamily: "Inter-Normal",
+    fontFamily: "Inter-Medium",
   },
 
   // --- Chips ---
   completed__chipsRow: {
     flexDirection: "row",
     flexWrap: "wrap",
-    gap: 6,
-    marginBottom: 12,
+    gap: 8,
   },
 
   completed__chip: {
     flexDirection: "row",
     alignItems: "center",
     gap: 6,
-    backgroundColor: colors.lightGray,
+    borderWidth: 1,
+    borderColor: colors.black,
+    borderRadius: 12,
     paddingHorizontal: 10,
     paddingVertical: 6,
-    borderRadius: 10,
+    backgroundColor: colors.white,
   },
 
   completed__chipText: {
     fontSize: 13,
     color: colors.black,
-    fontFamily: "Inter-Normal",
+    fontFamily: "Inter-Medium",
+    alignSelf: "stretch",
+    textAlign: "center",
+  },
+
+  completed__emptyContainer: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 80,
+  },
+
+  completed__emptyText: {
+    fontSize: 15,
+    color: colors.gray,
+    fontFamily: "Inter-Italic",
   },
 
   // --- Bottom ---
   completed__bottomRow: {
+    paddingTop: 12,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
@@ -62,9 +75,8 @@ export const styles = StyleSheet.create({
 
   completed__price: {
     fontSize: 20,
-    fontWeight: "700",
     color: colors.black,
-    fontFamily: "Inter-Normal",
+    fontFamily: "Inter-Bold",
   },
 
   completed__detailsButton: {
@@ -78,22 +90,31 @@ export const styles = StyleSheet.create({
   completed__detailsButtonText: {
     fontSize: 14,
     color: colors.black,
-    fontWeight: "500",
     fontFamily: "Inter-Normal",
+  },
+
+  completed__chargeButton: {
+    backgroundColor: colors.primary,
+    borderRadius: 10,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderWidth: 1,
+    borderColor: colors.primary,
+    width: "60%",
+  },
+
+  completed__chargeButtonText: {
+    fontSize: 14,
+    color: colors.white,
+    fontFamily: "Inter-Medium",
+    textAlign: "center",
   },
 
   // --- Empty state ---
-  completed__emptyContainer: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    paddingVertical: 80,
-  },
-
-  completed__emptyText: {
-    fontSize: 15,
+  completed__noCategoryText: {
+    fontSize: 14,
     color: colors.gray,
-    fontStyle: "italic",
-    fontFamily: "Inter-Normal",
+    fontFamily: "Inter-MediumItalic",
+    marginBottom: 10,
   },
 });

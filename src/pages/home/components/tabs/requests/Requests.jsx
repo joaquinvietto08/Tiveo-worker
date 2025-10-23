@@ -11,11 +11,69 @@ import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { styles } from "./RequestsStyles";
 import { UserContext } from "../../../../../context/UserContext";
 import { useNavigation } from "@react-navigation/native";
+import {
+  formatDate,
+  formatTime,
+  translateService,
+} from "../../../../../utils/formatHelpers";
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  doc,
+  updateDoc,
+  serverTimestamp,
+} from "firebase/firestore";
+import { FIREBASE_APP } from "../../../../../config/firebaseConfig";
 
 const Requests = () => {
   const navigation = useNavigation();
   const [selectedImage, setSelectedImage] = useState(null);
-  const { requests } = useContext(UserContext); // solo requests, no activities
+  const { requests, postulations, user } = useContext(UserContext);
+
+  const visibleRequests = requests.filter((req) => {
+    if (req.type === "direct") return true;
+    // Todas mis postulaciones vinculadas a esta request
+    const relatedPostulations = postulations.filter(
+      (p) => p.requestId === req.id
+    );
+    // 🔹 No tengo ninguna postulación → mostrar
+    if (relatedPostulations.length === 0) return true;
+    // 🔹 Si alguna está rejected → ocultar
+    const hasRejected = relatedPostulations.some(
+      (p) => p.status === "rejected"
+    );
+    if (hasRejected) return false;
+    // 🔹 En cualquier otro caso (por ejemplo pending o accepted) → mostrar
+    return true;
+  });
+
+  const handleReject = async (item) => {
+    try {
+      const db = getFirestore(FIREBASE_APP);
+
+      if (item.type === "open") {
+        // request abierta → se guarda una postulación con status "rejected"
+        await addDoc(collection(db, "postulations"), {
+          requestId: item.id,
+          worker: {
+            uid: user.uid,
+            firstName: user.firstName,
+            lastName: user.lastName,
+          },
+          status: "rejected",
+          createdAt: serverTimestamp(),
+        });
+        console.log("🟥 Postulación rechazada:", item.id);
+      } else if (item.type === "direct") {
+        // request directa → se actualiza su status a "rejected"
+        const requestRef = doc(db, "requests", item.id);
+        await updateDoc(requestRef, {
+          status: "rejected",
+        });
+      }
+    } catch (error) {}
+  };
 
   const getServiceIcon = (service) => {
     switch (service) {
@@ -44,13 +102,7 @@ const Requests = () => {
     }
 
     const dateText = scheduledDateTime
-      ? new Date(scheduledDateTime).toLocaleDateString("es-AR", {
-          weekday: "long",
-          day: "numeric",
-          month: "long",
-          hour: "2-digit",
-          minute: "2-digit",
-        })
+      ? `${formatDate(scheduledDateTime)} ${formatTime(scheduledDateTime)} hs`
       : "Sin fecha";
 
     return (
@@ -113,7 +165,7 @@ const Requests = () => {
                 <View key={i} style={styles.requests__chip}>
                   {getServiceIcon(srv)}
                   <Text style={styles.requests__chipText}>
-                    {srv.charAt(0).toUpperCase() + srv.slice(1)}
+                    {translateService(srv)}
                   </Text>
                 </View>
               ))}
@@ -140,7 +192,10 @@ const Requests = () => {
         )}
 
         <View style={styles.requests__buttonsRow}>
-          <TouchableOpacity style={styles.requests__buttonReject}>
+          <TouchableOpacity
+            style={styles.requests__buttonReject}
+            onPress={() => handleReject(item)}
+          >
             <Text style={styles.requests__buttonRejectText}>Rechazar</Text>
           </TouchableOpacity>
 
@@ -161,7 +216,7 @@ const Requests = () => {
       contentContainerStyle={styles.requests__container}
       showsVerticalScrollIndicator={false}
     >
-      {requests.map((item) => renderCard(item))}
+      {visibleRequests.map((item) => renderCard(item))}
 
       <Modal visible={!!selectedImage} transparent animationType="fade">
         <View style={styles.requests__modalOverlay}>

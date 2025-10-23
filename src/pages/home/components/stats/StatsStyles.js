@@ -17,7 +17,7 @@ export const styles = StyleSheet.create({
 
   home__stats__number: {
     fontSize: 20,
-    fontWeight: "700",
+    fontFamily: "Inter-SemiBold",
     color: colors.black,
   },
 

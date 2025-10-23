@@ -3,12 +3,13 @@ import { View, Text, TouchableOpacity } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { styles } from "./CompletedStyles";
 import { UserContext } from "../../../../../context/UserContext";
+import { formatDate, formatPrice, formatTime } from "../../../../../utils/formatHelpers";
 
 const Completed = () => {
   const { activities } = useContext(UserContext);
 
   const completeActivities = activities.filter(
-    (item) => item.status === "cancelled" && item.status === "done"
+    (item) => item.status === "cancelled" || item.status === "done"
   );
 
   if (!completeActivities.length) {
@@ -22,49 +23,47 @@ const Completed = () => {
   }
 
   return (
-    <View style={styles.completed__container}>
+    <View style={styles.completed__mainContainer}>
       {completeActivities.map((item) => {
         const services = item.services || [];
         const hasServices = services.length > 0;
+        const hasAmount = item.amount && item.amount > 0;
 
         return (
           <View key={item.id} style={styles.completed__card}>
-            {/* Fecha y hora */}
             <Text style={styles.completed__dateText}>
-              {item.scheduledDateTime
-                ? new Date(item.scheduledDateTime).toLocaleString("es-AR", {
-                    weekday: "long",
-                    day: "numeric",
-                    month: "long",
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  }) + " hs"
-                : "Fecha no disponible"}
+              {formatDate(item.startedAt)} {formatTime(item.startedAt)} hs
             </Text>
 
-            {/* Chips de servicios */}
-            {hasServices && (
+            {/* --- Servicios o texto "Sin categoría" --- */}
+            {hasServices ? (
               <View style={styles.completed__chipsRow}>
                 {services.map((srv, index) => (
                   <View key={index} style={styles.completed__chip}>
-                    <MaterialCommunityIcons
-                      name="leaf"
-                      size={16}
-                      color="#000"
-                    />
+                    <MaterialCommunityIcons name="leaf" size={16} color="#000" />
                     <Text style={styles.completed__chipText}>
                       {srv.charAt(0).toUpperCase() + srv.slice(1)}
                     </Text>
                   </View>
                 ))}
               </View>
+            ) : (
+              <Text style={styles.completed__noCategoryText}>Sin categoría</Text>
             )}
 
-            {/* Monto y botón */}
+            {/* --- Monto o Cobrar + botón de detalles --- */}
             <View style={styles.completed__bottomRow}>
-              <Text style={styles.completed__price}>
-                ${item.amount ? item.amount.toLocaleString("es-AR") : "0"}
-              </Text>
+              {hasAmount ? (
+                <Text style={styles.completed__price}>
+                  {formatPrice(item.amount)}
+                </Text>
+              ) : (
+                <TouchableOpacity style={styles.completed__chargeButton}>
+                  <Text style={styles.completed__chargeButtonText}>
+                    Cobrar trabajo
+                  </Text>
+                </TouchableOpacity>
+              )}
 
               <TouchableOpacity style={styles.completed__detailsButton}>
                 <Text style={styles.completed__detailsButtonText}>

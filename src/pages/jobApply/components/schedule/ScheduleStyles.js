@@ -46,12 +46,16 @@ export const styles = StyleSheet.create({
     fontSize: 15,
     color: colors.black,
     fontFamily: "Inter-Bold",
+    alignSelf: "stretch",
+    textAlign: "center",
   },
 
   jobApply__schedule__dateText: {
     color: colors.black,
     fontSize: 13,
     fontFamily: "Inter-Bold",
+    alignSelf: "stretch",
+    textAlign: "center",
   },
 
   jobApply__schedule__divider: {

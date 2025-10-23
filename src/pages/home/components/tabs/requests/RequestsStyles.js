@@ -64,12 +64,12 @@ export const styles = StyleSheet.create({
   },
   requests__momentNow: {
     color: "#FFA500",
-    fontWeight: "600",
     fontFamily: "Inter-SemiBold",
+    alignSelf: "stretch",
+    textAlign: "center",
   },
   requests__momentScheduled: {
     color: colors.black,
-    fontWeight: "600",
     fontFamily: "Inter-SemiBold",
   },
   // --- Categorías ---
@@ -96,6 +96,8 @@ export const styles = StyleSheet.create({
     fontSize: 13,
     color: colors.black,
     fontFamily: "Inter-Medium",
+    alignSelf: "stretch",
+    textAlign: "center",
   },
   // --- Imágenes ---
   requests__imagesContainer: {
@@ -125,6 +127,8 @@ export const styles = StyleSheet.create({
   requests__buttonRejectText: {
     color: colors.black,
     fontFamily: "Inter-Medium",
+    alignSelf: "stretch",
+    textAlign: "center",
   },
   requests__buttonAccept: {
     flex: 1,
@@ -136,6 +140,8 @@ export const styles = StyleSheet.create({
   requests__buttonAcceptText: {
     color: colors.white,
     fontFamily: "Inter-SemiBold",
+    alignSelf: "stretch",
+    textAlign: "center",
   },
   // --- Modal ---
   requests__modalOverlay: {

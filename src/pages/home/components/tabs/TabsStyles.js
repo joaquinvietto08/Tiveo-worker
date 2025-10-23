@@ -30,6 +30,8 @@ export const styles = StyleSheet.create({
     fontFamily: "Inter-Medium",
     color: colors.black,
     fontSize: 13,
+    alignSelf: "stretch",
+    textAlign: "center",
   },
   home__tabs__text__active: {
     fontFamily: "Inter-SemiBold",
