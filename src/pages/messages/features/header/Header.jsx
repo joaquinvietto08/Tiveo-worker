@@ -3,6 +3,7 @@ import { Image, Pressable, Text, View } from "react-native";
 import { styles } from "./HeaderStyles";
 import Feather from "@expo/vector-icons/Feather";
 import { useNavigation } from "@react-navigation/native";
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { colors } from "../../../../styles/globalStyles";
 
 const Header = ({client}) => {
@@ -17,6 +18,7 @@ const Header = ({client}) => {
         <Feather name="arrow-left" size={24} color={colors.black}/>
       </Pressable>
       <View style={styles.messages__header__clientContainer}>
+        <MaterialCommunityIcons name="account-circle" size={40} color={colors.gray} />
         <Text style={styles.messages__header__nameText} numberOfLines={2}>
           {client.displayName ?? "Cliente" }
         </Text>

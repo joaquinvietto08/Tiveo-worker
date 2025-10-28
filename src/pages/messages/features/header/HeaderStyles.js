@@ -17,7 +17,7 @@ export const styles = StyleSheet.create({
   messages__header__clientContainer: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 15,
+    gap: 8,
     paddingLeft: 10,
   },
   messages__header__clientImage: {

@@ -42,7 +42,7 @@ export const translateAvailability = (availability) => {
 };
 
 export const formatPrice = (price) => {
-  if (!price) {
+  if (!price && price !== 0) {
     return "Pago no registrado";
   }
   return `$ ${price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}`;

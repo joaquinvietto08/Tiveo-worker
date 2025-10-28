@@ -8,6 +8,7 @@ export const styles = StyleSheet.create({
     alignItems: "center",
     paddingVertical: 14,
     backgroundColor: colors.white,
+    elevation: 2
   },
 
   home__stats__item: {

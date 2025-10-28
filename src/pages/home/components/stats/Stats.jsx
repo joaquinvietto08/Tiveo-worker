@@ -19,11 +19,7 @@ const Stats = ({}) => {
       .filter((a) => {
         if (!a.startedAt || a.paymentStatus === "pending") return false;
 
-        // Convertimos startedAt a Date si es un Timestamp de Firestore
-        const startedDate = a.startedAt.toDate
-          ? a.startedAt.toDate()
-          : new Date(a.startedAt);
-
+        const startedDate = a.startedAt
         return (
           startedDate.getMonth() === currentMonth &&
           startedDate.getFullYear() === currentYear
