@@ -1,9 +1,14 @@
 import React, { useContext } from "react";
 import { View, Text, TouchableOpacity } from "react-native";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { styles } from "./CompletedStyles";
 import { UserContext } from "../../../../../context/UserContext";
-import { formatDate, formatPrice, formatTime } from "../../../../../utils/formatHelpers";
+import {
+  formatDate,
+  formatPrice,
+  formatTime,
+  translateService,
+} from "../../../../../utils/formatHelpers";
+import { getIcon } from "../../../../../utils/getIcons";
 
 const Completed = () => {
   const { activities } = useContext(UserContext);
@@ -38,17 +43,22 @@ const Completed = () => {
             {/* --- Servicios o texto "Sin categoría" --- */}
             {hasServices ? (
               <View style={styles.completed__chipsRow}>
-                {services.map((srv, index) => (
-                  <View key={index} style={styles.completed__chip}>
-                    <MaterialCommunityIcons name="leaf" size={16} color="#000" />
-                    <Text style={styles.completed__chipText}>
-                      {srv.charAt(0).toUpperCase() + srv.slice(1)}
-                    </Text>
-                  </View>
-                ))}
+                {services.map((srv, index) => {
+                  const ServiceIcon = getIcon(srv);
+                  return (
+                    <View key={index} style={styles.completed__chip}>
+                      <ServiceIcon width={16} height={16} />
+                      <Text style={styles.completed__chipText}>
+                        {translateService(srv)}
+                      </Text>
+                    </View>
+                  );
+                })}
               </View>
             ) : (
-              <Text style={styles.completed__noCategoryText}>Sin categoría</Text>
+              <Text style={styles.completed__noCategoryText}>
+                Sin categoría
+              </Text>
             )}
 
             {/* --- Monto o Cobrar + botón de detalles --- */}

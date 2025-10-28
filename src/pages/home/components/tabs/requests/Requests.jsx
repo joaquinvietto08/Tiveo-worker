@@ -7,10 +7,12 @@ import {
   Modal,
   ScrollView,
 } from "react-native";
-import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 import { styles } from "./RequestsStyles";
 import { UserContext } from "../../../../../context/UserContext";
 import { useNavigation } from "@react-navigation/native";
+import Available from "../../../../../../assets/svgs/worker/available.svg";
+import Busy from "../../../../../../assets/svgs/worker/busy.svg";
 import {
   formatDate,
   formatTime,
@@ -25,6 +27,8 @@ import {
   serverTimestamp,
 } from "firebase/firestore";
 import { FIREBASE_APP } from "../../../../../config/firebaseConfig";
+import { colors } from "../../../../../styles/globalStyles";
+import { getIcon } from "../../../../../utils/getIcons";
 
 const Requests = () => {
   const navigation = useNavigation();
@@ -75,27 +79,16 @@ const Requests = () => {
     } catch (error) {}
   };
 
-  const getServiceIcon = (service) => {
-    switch (service) {
-      case "electricity":
-      case "electric":
-        return <Ionicons name="flash-outline" size={16} color="#000" />;
-      case "plumbing":
-        return <MaterialCommunityIcons name="pipe" size={16} color="#000" />;
-      case "gas":
-        return <MaterialCommunityIcons name="fire" size={16} color="#000" />;
-      case "pool":
-        return <MaterialCommunityIcons name="pool" size={16} color="#000" />;
-      default:
-        return <Ionicons name="construct-outline" size={16} color="#000" />;
-    }
-  };
-
   const renderDateAndMoment = (moment, scheduledDateTime) => {
     if (moment === "now") {
       return (
         <View style={styles.requests__momentRow}>
-          <Ionicons name="walk-outline" size={16} color="#FFA500" />
+          <Available
+            height={22}
+            width={22}
+            fill={colors.primary}
+            style={styles.advanceSearch__footer__detailIcon}
+          />
           <Text style={styles.requests__momentNow}>Ahora mismo</Text>
         </View>
       );
@@ -107,7 +100,12 @@ const Requests = () => {
 
     return (
       <View style={styles.requests__momentRow}>
-        <Ionicons name="time-outline" size={16} color="#000" />
+        <Busy
+          height={20}
+          width={20}
+          fill={colors.black}
+          style={styles.advanceSearch__footer__detailIcon}
+        />
         <Text style={styles.requests__momentScheduled}>{dateText}</Text>
       </View>
     );
@@ -147,7 +145,7 @@ const Requests = () => {
 
         <Text style={styles.requests__sectionLabel}>Dirección</Text>
         <View style={styles.requests__iconText}>
-          <Ionicons name="location-sharp" size={14} color="#000" />
+          <Ionicons name="location-sharp" size={18} color="#000" />
           <Text style={styles.requests__text}>
             {item.address?.address || "No disponible"}
             {item.address?.floor ? `, ${item.address.floor}` : ""}
@@ -161,14 +159,17 @@ const Requests = () => {
           <View style={styles.requests__servicesContainer}>
             <Text style={styles.requests__sectionLabel}>Categorías</Text>
             <View style={styles.requests__chipsRow}>
-              {services.map((srv, i) => (
-                <View key={i} style={styles.requests__chip}>
-                  {getServiceIcon(srv)}
-                  <Text style={styles.requests__chipText}>
-                    {translateService(srv)}
-                  </Text>
-                </View>
-              ))}
+              {services.map((srv, i) => {
+                const ServiceIcon = getIcon(srv);
+                return (
+                  <View key={i} style={styles.requests__chip}>
+                    <ServiceIcon width={16} height={16} />
+                    <Text style={styles.requests__chipText}>
+                      {translateService(srv)}
+                    </Text>
+                  </View>
+                );
+              })}
             </View>
           </View>
         )}

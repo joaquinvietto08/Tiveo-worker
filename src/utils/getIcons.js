@@ -1,4 +1,4 @@
-/* import electricity from "../../assets/svgs/services/electricity";
+import electricity from "../../assets/svgs/services/electricity";
 import plumbing from "../../assets/svgs/services/plumbing";
 import gas from "../../assets/svgs/services/gas";
 import gardening from "../../assets/svgs/services/gardening";
@@ -45,4 +45,3 @@ export const getIcon = (serviceName) => {
 
   return iconMap[serviceName] || null;
 };
- */

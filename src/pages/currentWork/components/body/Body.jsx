@@ -2,7 +2,12 @@ import React from "react";
 import { View, Text, TouchableOpacity } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import { styles } from "./BodyStyles";
-import { formatDate, formatTime, translateService } from "../../../../utils/formatHelpers";
+import {
+  formatDate,
+  formatTime,
+  translateService,
+} from "../../../../utils/formatHelpers";
+import { getIcon } from "../../../../utils/getIcons";
 
 const Body = ({ activity }) => {
   const {
@@ -76,14 +81,17 @@ const Body = ({ activity }) => {
         <View style={styles.currentWork__body__section}>
           <Text style={styles.currentWork__body__sectionTitle}>Servicios</Text>
           <View style={styles.currentWork__body__servicesRow}>
-            {services.map((service, index) => (
-              <View key={index} style={styles.currentWork__body__serviceTag}>
-                <MaterialIcons name="music-note" size={16} color="#000" />
-                <Text style={styles.currentWork__body__serviceText}>
-                  {translateService(service)}
-                </Text>
-              </View>
-            ))}
+            {services.map((srv, index) => {
+              const ServiceIcon = getIcon(srv);
+              return (
+                <View key={index} style={styles.currentWork__body__serviceTag}>
+                  <ServiceIcon width={16} height={16} />
+                  <Text style={styles.currentWork__body__serviceText}>
+                    {translateService(srv)}
+                  </Text>
+                </View>
+              );
+            })}
           </View>
         </View>
       )}

@@ -7,12 +7,17 @@ import {
   ScrollView,
   Modal,
 } from "react-native";
-import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 import { styles } from "./SchedulesStyles";
 import { UserContext } from "../../../../../context/UserContext";
 import { getFirestore, doc, updateDoc } from "firebase/firestore";
 import { FIREBASE_APP } from "../../../../../config/firebaseConfig";
 import { useNavigation } from "@react-navigation/native";
+import Busy from "../../../../../../assets/svgs/worker/busy.svg";
+import Available from "../../../../../../assets/svgs/worker/available.svg";
+import { colors } from "../../../../../styles/globalStyles";
+import { getIcon } from "../../../../../utils/getIcons";
+import { translateService } from "../../../../../utils/formatHelpers";
 
 const Schedules = () => {
   const [selectedImage, setSelectedImage] = useState(null);
@@ -30,7 +35,7 @@ const Schedules = () => {
       await updateDoc(activityRef, {
         status: "starting",
       });
-      navigation.navigate("CurrentWork", { activityId })
+      navigation.navigate("CurrentWork", { activityId });
       console.log(`✅ Trabajo ${activityId} marcado como "starting"`);
     } catch (error) {
       console.error("❌ Error al actualizar estado:", error);
@@ -52,21 +57,6 @@ const Schedules = () => {
 
     return 0;
   });
-
-  const getServiceIcon = (service) => {
-    switch (service) {
-      case "electricity":
-        return <Ionicons name="flash-outline" size={16} color="#000" />;
-      case "plumbing":
-        return <MaterialCommunityIcons name="pipe" size={16} color="#000" />;
-      case "gas":
-        return <MaterialCommunityIcons name="fire" size={16} color="#000" />;
-      case "gardening":
-        return <MaterialCommunityIcons name="leaf" size={16} color="#000" />;
-      default:
-        return <Ionicons name="construct-outline" size={16} color="#000" />;
-    }
-  };
 
   const renderCard = (item) => {
     const hasDescription = item.description && item.description.trim() !== "";
@@ -93,7 +83,7 @@ const Schedules = () => {
         {/* Dirección */}
         <Text style={styles.schedules__sectionLabel}>Dirección</Text>
         <View style={styles.schedules__iconText}>
-          <Ionicons name="location-sharp" size={14} color="#000" />
+          <Ionicons name="location-sharp" size={18} color="#000" />
           <Text style={styles.schedules__text}>
             {item.address?.address || "No disponible"}
             {item.address?.floor ? `, ${item.address.floor}` : ""}
@@ -105,12 +95,22 @@ const Schedules = () => {
         <View style={styles.schedules__momentRow}>
           {item.moment === "now" ? (
             <>
-              <Ionicons name="walk-outline" size={16} color="#FFA500" />
+              <Available
+                height={22}
+                width={22}
+                fill={colors.primary}
+                style={styles.advanceSearch__footer__detailIcon}
+              />
               <Text style={styles.schedules__momentNow}>Ahora mismo</Text>
             </>
           ) : (
             <>
-              <Ionicons name="time-outline" size={16} color="#000" />
+              <Busy
+                height={22}
+                width={22}
+                fill={colors.black}
+                style={styles.advanceSearch__footer__detailIcon}
+              />
               <Text style={styles.schedules__momentScheduled}>
                 Martes 16 de junio 17:30 hs
               </Text>
@@ -123,14 +123,17 @@ const Schedules = () => {
           <View style={styles.schedules__servicesContainer}>
             <Text style={styles.schedules__sectionLabel}>Categorías</Text>
             <View style={styles.schedules__chipsRow}>
-              {item.services.map((srv, i) => (
-                <View key={i} style={styles.schedules__chip}>
-                  {getServiceIcon(srv)}
-                  <Text style={styles.schedules__chipText}>
-                    {srv.charAt(0).toUpperCase() + srv.slice(1)}
-                  </Text>
-                </View>
-              ))}
+              {item.services.map((srv, i) => {
+                const ServiceIcon = getIcon(srv);
+                return (
+                  <View key={i} style={styles.schedules__chip}>
+                    <ServiceIcon width={16} height={16} />
+                    <Text style={styles.schedules__chipText}>
+                      {translateService(srv)}
+                    </Text>
+                  </View>
+                );
+              })}
             </View>
           </View>
         )}
