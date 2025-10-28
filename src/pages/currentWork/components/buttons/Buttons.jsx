@@ -6,10 +6,12 @@ import { UserContext } from "../../../../context/UserContext";
 import { colors } from "../../../../styles/globalStyles";
 import { getFirestore, doc, updateDoc } from "firebase/firestore";
 import { FIREBASE_APP } from "../../../../config/firebaseConfig";
+import { useNavigation } from "@react-navigation/native";
 
 const Buttons = ({ activity }) => {
   const { activities, setActivities } = useContext(UserContext);
   const [loading, setLoading] = useState(false);
+  const navigation = useNavigation();
 
   // --- Avanzar estado ---
   const handleNextStatus = async () => {
@@ -153,7 +155,7 @@ const Buttons = ({ activity }) => {
       <TouchableOpacity
         style={styles.currentWork__buttons__messageBtn}
         activeOpacity={0.85}
-        onPress={() => {}}
+        onPress={() => navigation.navigate("Messages", { activity })}
       >
         <MaterialIcons
           name="chat-bubble-outline"

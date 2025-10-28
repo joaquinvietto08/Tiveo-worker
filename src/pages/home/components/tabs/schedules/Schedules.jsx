@@ -10,17 +10,14 @@ import {
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { styles } from "./SchedulesStyles";
 import { UserContext } from "../../../../../context/UserContext";
-import {
-  getFirestore,
-  doc,
-  updateDoc,
-  serverTimestamp,
-} from "firebase/firestore";
+import { getFirestore, doc, updateDoc } from "firebase/firestore";
 import { FIREBASE_APP } from "../../../../../config/firebaseConfig";
+import { useNavigation } from "@react-navigation/native";
 
 const Schedules = () => {
   const [selectedImage, setSelectedImage] = useState(null);
   const { activities } = useContext(UserContext);
+  const navigation = useNavigation();
 
   const activeActivities = activities.filter(
     (item) => item.status !== "done" && item.status !== "cancelled"
@@ -33,6 +30,7 @@ const Schedules = () => {
       await updateDoc(activityRef, {
         status: "starting",
       });
+      navigation.navigate("CurrentWork", { activityId })
       console.log(`✅ Trabajo ${activityId} marcado como "starting"`);
     } catch (error) {
       console.error("❌ Error al actualizar estado:", error);
