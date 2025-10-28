@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1051392459652",
+    "project_id": "tiveo-5f6c4",
+    "storage_bucket": "tiveo-5f6c4.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1051392459652:android:3eab9c5258559aaeb813d1",
+        "android_client_info": {
+          "package_name": "com.tiveoWorker"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBhvw2X2KetklU_Bz7SOM_GZpvc9nqafww"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
