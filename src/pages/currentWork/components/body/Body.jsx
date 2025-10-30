@@ -12,7 +12,7 @@ import { getIcon } from "../../../../utils/getIcons";
 const Body = ({ activity }) => {
   const {
     description,
-    user,
+    client,
     address,
     scheduledDateTime,
     services = [],
@@ -33,7 +33,7 @@ const Body = ({ activity }) => {
       <View style={styles.currentWork__body__clientRow}>
         <View>
           <Text style={styles.currentWork__body__clientName}>
-            {user?.displayName || "Cliente desconocido"}
+            {client?.displayName || "Cliente desconocido"}
           </Text>
           <Text style={styles.currentWork__body__clientLabel}>Cliente</Text>
         </View>

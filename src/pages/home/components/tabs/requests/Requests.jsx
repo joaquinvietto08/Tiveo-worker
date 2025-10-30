@@ -140,7 +140,7 @@ const Requests = () => {
         </Text>
 
         <Text style={styles.requests__client}>
-          {item.user?.displayName || "Usuario desconocido"}
+          {item.client?.displayName || "Usuario desconocido"}
         </Text>
 
         <Text style={styles.requests__sectionLabel}>Dirección</Text>

@@ -67,7 +67,7 @@ const Summary = ({job}) => {
       </Text>
 
       <Text style={styles.jobApply__summary__client}>
-        {job.user?.displayName}
+        {job.client?.displayName}
       </Text>
 
       <View style={styles.jobApply__summary__iconText}>

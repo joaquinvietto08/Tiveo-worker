@@ -87,7 +87,7 @@ const CurrentWorkCard = ({ onPress }) => {
   return (
     <>
       {currentActivities.map((activity) => {
-        const { description, user, address, status, id } = activity;
+        const { description, client, address, status, id } = activity;
         return (
           <TouchableOpacity
             key={id}
@@ -109,7 +109,7 @@ const CurrentWorkCard = ({ onPress }) => {
                 {description || "Trabajo sin descripción"}
               </Text>
               <Text style={styles.home__currentWork__client}>
-                {user?.displayName || "Cliente desconocido"}
+                {client?.displayName || "Cliente desconocido"}
               </Text>
               <View style={styles.home__currentWork__locationRow}>
                 <MaterialIcons name="location-on" size={16} color="#fff" />
