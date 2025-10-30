@@ -5,9 +5,6 @@ import Root from "./src/routes/Root";
 import { UserProvider } from "./src/context/UserContext";
 
 export default function App() {
-  // Color de la barra de navegación (abajo)
-
-  // Cambia el color de los íconos (light = íconos claros, dark = íconos oscuros)
   return (
     <SafeAreaProvider>
       <UserProvider>

@@ -14,6 +14,8 @@ const Onboarding = ({ navigation }) => {
     name: "",
     lastName: "",
     workerName: "",
+    phone: "",
+    birthDate: "",
     photo: null,
     description: "",
     services: [],
@@ -31,40 +33,40 @@ const Onboarding = ({ navigation }) => {
     <View
       style={[
         styles.onboarding__mainContainer,
-        { paddingTop: insets.top + 40, paddingBottom: insets.bottom + 40 },
+        { paddingTop: insets.top + 40, paddingBottom: insets.bottom},
       ]}
     >
-      {currentStep === 1 && (
-        <Info
-          workerData={workerData}
-          setWorkerData={setWorkerData}
-          onNext={handleNext}
-        />
-      )}
-      {currentStep === 2 && (
-        <Photo
-          workerData={workerData}
-          setWorkerData={setWorkerData}
-          onNext={handleNext}
-          onBack={handleBack}
-        />
-      )}
-      {currentStep === 3 && (
-        <Description
-          workerData={workerData}
-          setWorkerData={setWorkerData}
-          onNext={handleNext}
-          onBack={handleBack}
-        />
-      )}
-      {currentStep === 4 && (
-        <Services
-          workerData={workerData}
-          setWorkerData={setWorkerData}
-          onBack={handleBack}
-          onFinish={handleFinish}
-        />
-      )}
+        {currentStep === 1 && (
+          <Info
+            workerData={workerData}
+            setWorkerData={setWorkerData}
+            onNext={handleNext}
+          />
+        )}
+        {currentStep === 2 && (
+          <Photo
+            workerData={workerData}
+            setWorkerData={setWorkerData}
+            onNext={handleNext}
+            onBack={handleBack}
+          />
+        )}
+        {currentStep === 3 && (
+          <Description
+            workerData={workerData}
+            setWorkerData={setWorkerData}
+            onNext={handleNext}
+            onBack={handleBack}
+          />
+        )}
+        {currentStep === 4 && (
+          <Services
+            workerData={workerData}
+            setWorkerData={setWorkerData}
+            onBack={handleBack}
+            onFinish={handleFinish}
+          />
+        )}
     </View>
   );
 };

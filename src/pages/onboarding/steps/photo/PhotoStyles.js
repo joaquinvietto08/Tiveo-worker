@@ -67,6 +67,7 @@ export const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     marginTop: "auto",
+    marginBottom: 40,
   },
   photo__backButton: {
     borderWidth: 1,

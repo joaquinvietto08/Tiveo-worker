@@ -4,7 +4,7 @@ import { colors } from "../../../../styles/globalStyles";
 export const styles = StyleSheet.create({
   info__mainContainer: {
     flex: 1,
-  },
+    },
   info__title: {
     fontSize: 20,
     fontFamily: "Inter-Bold",
@@ -71,7 +71,8 @@ export const styles = StyleSheet.create({
     borderRadius: 8,
     paddingVertical: 14,
     alignItems: "center",
-    marginTop: "auto",
+    marginTop: 30,
+    marginBottom: 40
   },
   info__buttonText: {
     color: colors.white,
