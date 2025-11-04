@@ -1,11 +1,17 @@
-import React, { useState } from "react";
-import { View, Text, TouchableOpacity, FlatList } from "react-native";
+import React, { useState, useEffect } from "react";
+import { View, Text, TouchableOpacity, FlatList, ActivityIndicator } from "react-native";
 import { styles } from "./ServicesStyles";
-import { servicesData } from "../../../../utils/servicesData"; // ajustá ruta también
+import { servicesData } from "../../../../utils/servicesData";
 import { translateService } from "../../../../utils/formatHelpers";
+import { getIcon } from "../../../../utils/getIcons";
+import { colors } from "../../../../styles/globalStyles";
 
-const Services = ({ workerData, setWorkerData, onBack, onFinish }) => {
+const Services = ({ workerData, setWorkerData, onBack, onFinish, loading }) => {
   const [selected, setSelected] = useState(workerData.services || []);
+
+  useEffect(() => {
+    setWorkerData((prev) => ({ ...prev, services: selected }));
+  }, [selected]);
 
   const handleToggle = (service) => {
     if (selected.includes(service)) {
@@ -15,14 +21,10 @@ const Services = ({ workerData, setWorkerData, onBack, onFinish }) => {
     }
   };
 
-  const handleFinish = () => {
-    setWorkerData({ ...workerData, services: selected });
-    onFinish();
-  };
-
   const renderService = ({ item }) => {
     const isSelected = selected.includes(item.name);
     const label = translateService(item.name) || item.name;
+    const Icon = getIcon(item.name); // 👈 obtenemos el ícono correspondiente
 
     return (
       <TouchableOpacity
@@ -33,6 +35,9 @@ const Services = ({ workerData, setWorkerData, onBack, onFinish }) => {
         onPress={() => handleToggle(item.name)}
         activeOpacity={0.8}
       >
+        <View style={styles.services__iconContainer}>
+          {Icon ? <Icon width={28} height={28} fill={colors.black} /> : null}
+        </View>
         <Text
           style={[
             styles.services__label,
@@ -41,7 +46,6 @@ const Services = ({ workerData, setWorkerData, onBack, onFinish }) => {
         >
           {label}
         </Text>
-        {isSelected && <Text style={styles.services__check}>✓</Text>}
       </TouchableOpacity>
     );
   };
@@ -65,8 +69,11 @@ const Services = ({ workerData, setWorkerData, onBack, onFinish }) => {
         keyExtractor={(item) => item.key}
         renderItem={renderService}
         numColumns={2}
-        columnWrapperStyle={{ justifyContent: "space-between" }}
-        contentContainerStyle={{ paddingBottom: 20 }}
+        columnWrapperStyle={{ justifyContent: "space-between", gap: 10 }}
+        contentContainerStyle={{
+          paddingHorizontal: 2,
+          paddingTop: 2,
+        }}
         showsVerticalScrollIndicator={false}
       />
 
@@ -82,12 +89,16 @@ const Services = ({ workerData, setWorkerData, onBack, onFinish }) => {
         <TouchableOpacity
           style={[
             styles.services__button,
-            selected.length === 0 && { backgroundColor: "#ccc" },
+            (selected.length === 0 || loading) && { backgroundColor: "#ccc" },
           ]}
-          onPress={handleFinish}
-          disabled={selected.length === 0}
+          onPress={!loading ? onFinish : null}
+          disabled={selected.length === 0 || loading}
         >
-          <Text style={styles.services__buttonText}>Crear perfil</Text>
+          {loading ? (
+            <ActivityIndicator size="small" color="#fff" />
+          ) : (
+            <Text style={styles.services__buttonText}>Crear perfil</Text>
+          )}
         </TouchableOpacity>
       </View>
     </View>

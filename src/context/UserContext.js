@@ -33,7 +33,7 @@ export function UserProvider({ children }) {
       const unsubscribeWorker = onSnapshot(workerRef, (snapshot) => {
         if (snapshot.exists()) {
           // 👇 el "user" del context es el worker de Firestore
-          setUser({ id: snapshot.id, ...snapshot.data() });
+          setUser({ uid: snapshot.id, ...snapshot.data() });
         } else {
           setUser(null);
         }

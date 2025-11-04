@@ -39,7 +39,7 @@ export const styles = StyleSheet.create({
     fontSize: 14,
     fontFamily: "Inter-Regular",
     color: colors.gray,
-    marginBottom: 40,
+    marginBottom: 20,
   },
   services__title: {
     fontSize: 20,
@@ -53,6 +53,11 @@ export const styles = StyleSheet.create({
     color: colors.gray,
     marginBottom: 20,
   },
+  services__iconContainer: {
+    marginBottom: 8,
+    alignItems: "center",
+    justifyContent: "center",
+  },
   services__card: {
     flex: 1,
     backgroundColor: colors.white,
@@ -62,8 +67,7 @@ export const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     paddingVertical: 18,
-    marginBottom: 16,
-    elevation: 2,
+    marginBottom: 10,
   },
   services__cardSelected: {
     borderColor: colors.black,
@@ -100,11 +104,13 @@ export const styles = StyleSheet.create({
     color: colors.gray,
     fontFamily: "Inter-Regular",
     marginBottom: 20,
+    paddingTop: 10
   },
   services__buttonsRow: {
     flexDirection: "row",
     justifyContent: "space-between",
     marginTop: "auto",
+    marginBottom: 40
   },
   services__backButton: {
     borderWidth: 1,
@@ -122,11 +128,13 @@ export const styles = StyleSheet.create({
     backgroundColor: colors.black,
     borderRadius: 8,
     paddingVertical: 14,
-    paddingHorizontal: 60,
+    width: 200,
+    justifyContent: "center"
   },
   services__buttonText: {
     color: colors.white,
     fontFamily: "Inter-SemiBold",
     fontSize: 15,
+    textAlign: "center"
   },
 });
