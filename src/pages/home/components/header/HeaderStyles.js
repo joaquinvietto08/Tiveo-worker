@@ -7,7 +7,7 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 20
   },
-  home__header__rowTop: { flexDirection: "row", gap: 12 },
+  home__header__rowTop: { flexDirection: "row", gap: 16 },
   home__header__avatarWrap: { width: 72, height: 72 },
   home__header__avatar: {
     width: 72,
@@ -29,6 +29,20 @@ export const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  home__header__infoCol: { flex: 1, justifyContent: "center" },
-  home__header__name: { fontSize: 14, color: colors.black, marginBottom: 8 },
+  home__header__infoCol: { 
+    flex: 1, 
+    justifyContent: "center",
+    gap: 4
+  },
+  home__header__fullName: { 
+    fontSize: 18, 
+    fontFamily: "Inter-SemiBold",
+    color: colors.black, 
+  },
+  home__header__workerName: { 
+    fontSize: 14, 
+    fontFamily: "Inter-Normal",
+    color: colors.black,
+    opacity: 0.7
+  },
 });

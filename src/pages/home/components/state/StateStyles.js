@@ -68,10 +68,13 @@ export const styles = StyleSheet.create({
     paddingVertical: 8,
     borderRadius: 999,
     backgroundColor: colors.white,
+    maxWidth: 220,
+    width: "auto",
   },
   home__state__locationText: {
     color: colors.gray,
     fontSize: 14,
     marginLeft: 6,
+    maxWidth: "100%",
   },
 });

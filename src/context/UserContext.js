@@ -1,4 +1,4 @@
-import React, { useState, useEffect, createContext } from "react";
+import React, { useState, useEffect, useRef, createContext } from "react";
 import {
   getFirestore,
   collection,
@@ -14,44 +14,79 @@ import { getApp } from "firebase/app";
 export const UserContext = createContext();
 
 export function UserProvider({ children }) {
-  const [user, setUser] = useState([]);
+  const [user, setUser] = useState(null);
   const [activities, setActivities] = useState([]);
   const [requests, setRequests] = useState([]);
   const [postulations, setPostulations] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  // Ref para rastrear cuando cada query se completa por primera vez
+  const loadedFlags = useRef({
+    activity: false,
+    requests: false,
+    postulations: false,
+  });
 
   const db = getFirestore(getApp()); 
 
   // 🔐 Escuchar sesión de Firebase Auth y luego traer el worker
   useEffect(() => {
+    let unsubscribeWorker = null;
+
     const unsubscribeAuth = auth().onAuthStateChanged((authUser) => {
       if (!authUser) {
         setUser(null);
+        setLoading(false);
         return;
       }
 
       const workerRef = doc(db, "workers", authUser.uid);
-      const unsubscribeWorker = onSnapshot(workerRef, (snapshot) => {
+      unsubscribeWorker = onSnapshot(workerRef, (snapshot) => {
         if (snapshot.exists()) {
           // 👇 el "user" del context es el worker de Firestore
           setUser({ uid: snapshot.id, ...snapshot.data() });
         } else {
           setUser(null);
+          setLoading(false);
         }
       });
-
-      return () => unsubscribeWorker();
     });
 
-    return () => unsubscribeAuth();
+    return () => {
+      unsubscribeAuth();
+      if (unsubscribeWorker) unsubscribeWorker();
+    };
   }, []);
 
   useEffect(() => {
     if (!user?.uid) {
       setActivities([]);
+      setRequests([]);
+      setPostulations([]);
+      setLoading(false);
+      // Reset flags cuando no hay user
+      loadedFlags.current = {
+        activity: false,
+        requests: false,
+        postulations: false,
+      };
       return;
     }
 
-    const db = getFirestore(FIREBASE_APP);
+    // Reset flags cuando cambia el user
+    loadedFlags.current = {
+      activity: false,
+      requests: false,
+      postulations: false,
+    };
+    setLoading(true);
+
+    const checkAllLoaded = () => {
+      const flags = loadedFlags.current;
+      if (flags.activity && flags.requests && flags.postulations) {
+        setLoading(false);
+      }
+    };
 
     // --- Escucha la colección "activities"
     const unsubscribeActivity = onSnapshot(
@@ -68,6 +103,10 @@ export function UserProvider({ children }) {
           };
         });
         setActivities(activitiesData);
+        if (!loadedFlags.current.activity) {
+          loadedFlags.current.activity = true;
+          checkAllLoaded();
+        }
       }
     );
 
@@ -89,6 +128,10 @@ export function UserProvider({ children }) {
       });
 
       setRequests(requestsData);
+      if (!loadedFlags.current.requests) {
+        loadedFlags.current.requests = true;
+        checkAllLoaded();
+      }
     });
 
     // --- Escucha las postulaciones del trabajador actual (no rechazadas)
@@ -110,6 +153,10 @@ export function UserProvider({ children }) {
           };
         });
         setPostulations(postulationsData);
+        if (!loadedFlags.current.postulations) {
+          loadedFlags.current.postulations = true;
+          checkAllLoaded();
+        }
       }
     );
 
@@ -119,11 +166,11 @@ export function UserProvider({ children }) {
       unsubscribeRequests();
       unsubscribePostulations();
     };
-  }, []);
+  }, [user?.uid]);
 
   return (
     <UserContext.Provider
-      value={{ user, activities, requests, postulations, setActivities }}
+      value={{ user, activities, requests, postulations, setActivities, loading }}
     >
       {children}
     </UserContext.Provider>

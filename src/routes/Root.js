@@ -8,15 +8,18 @@ import CurrentWork from "../pages/currentWork/CurrentWork";
 import Messages from "../pages/messages/Messages";
 import { UserContext } from "../context/UserContext";
 import AuthRoutes from "./AuthRoutes";
+import LocationRoutes from "./LocationRoutes";
 import Loading from "../components/loading/Loading";
+import { LocationContext } from "../context/LocationContext";
 
 const Stack = createNativeStackNavigator();
 
 const Root = () => {
   const { user, loading } = useContext(UserContext);
+  const { location } = useContext(LocationContext);
 
-/*   if (loading) return <Loading />; 
- */
+  if (loading) return <Loading />;
+
   return (
     <NavigationContainer>
       <Stack.Navigator
@@ -29,12 +32,16 @@ const Root = () => {
         {user ? (
           <>
             {user?.description ? (
-              <>
-                <Stack.Screen name="Home" component={Home} />
-                <Stack.Screen name="JobApply" component={JobApply} />
-                <Stack.Screen name="CurrentWork" component={CurrentWork} />
-                <Stack.Screen name="Messages" component={Messages} />
-              </>
+              location ? (
+                <>
+                  <Stack.Screen name="Home" component={Home} />
+                  <Stack.Screen name="JobApply" component={JobApply} />
+                  <Stack.Screen name="CurrentWork" component={CurrentWork} />
+                  <Stack.Screen name="Messages" component={Messages} />
+                </>
+              ) : (
+                <Stack.Screen name="Location" component={LocationRoutes} />
+              )
             ) : (
               <Stack.Screen name="Onboarding" component={Onboarding} />
             )}
