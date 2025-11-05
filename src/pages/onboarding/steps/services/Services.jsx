@@ -6,8 +6,11 @@ import { translateService } from "../../../../utils/formatHelpers";
 import { getIcon } from "../../../../utils/getIcons";
 import { colors } from "../../../../styles/globalStyles";
 
-const Services = ({ workerData, setWorkerData, onBack, onFinish, loading }) => {
-  const [selected, setSelected] = useState(workerData.services || []);
+const Services = ({ workerData, setWorkerData, onBack, onFinish, loading, mode = "create" }) => {
+  const isEditMode = mode === "edit";
+  const [selected, setSelected] = useState(
+    Array.isArray(workerData.services) ? workerData.services : []
+  );
 
   useEffect(() => {
     setWorkerData((prev) => ({ ...prev, services: selected }));
@@ -52,7 +55,9 @@ const Services = ({ workerData, setWorkerData, onBack, onFinish, loading }) => {
 
   return (
     <View style={styles.services__mainContainer}>
-      <Text style={styles.services__title}>Crear perfil de trabajador</Text>
+      <Text style={styles.services__title}>
+        {isEditMode ? "Editar perfil de trabajador" : "Crear perfil de trabajador"}
+      </Text>
       <Text style={styles.services__step}>Paso 4 de 4</Text>
 
       <View style={styles.services__progressContainer}>
@@ -97,7 +102,9 @@ const Services = ({ workerData, setWorkerData, onBack, onFinish, loading }) => {
           {loading ? (
             <ActivityIndicator size="small" color="#fff" />
           ) : (
-            <Text style={styles.services__buttonText}>Crear perfil</Text>
+            <Text style={styles.services__buttonText}>
+              {isEditMode ? "Guardar cambios" : "Crear perfil"}
+            </Text>
           )}
         </TouchableOpacity>
       </View>

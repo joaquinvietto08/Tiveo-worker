@@ -32,7 +32,7 @@ const Home = ({ navigation }) => {
         stickyHeaderIndices={[4]} // 👈 el índice de Tabs dentro del ScrollView
         contentContainerStyle={styles.home__scrollContent}
       >
-        <Header />
+        <Header onPressSettings={() => navigation.navigate("Profile")} />
         <State />
         {showModal && (
           <StateModal

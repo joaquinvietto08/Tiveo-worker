@@ -64,7 +64,7 @@ export const styles = StyleSheet.create({
   description__buttonsRow: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginTop: 219,
+    marginTop: "auto",
     marginBottom: 40,
   },
   description__backButton: {

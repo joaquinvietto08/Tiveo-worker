@@ -3,7 +3,9 @@ import { View, Text, TextInput, TouchableOpacity } from "react-native";
 import { styles } from "./InfoStyles";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
-const Info = ({ workerData, setWorkerData, onNext }) => {
+const Info = ({ workerData, setWorkerData, onNext, mode = "create" }) => {
+  const isEditMode = mode === "edit";
+
   const handleContinue = () => {
     if (
       workerData.name.trim() &&
@@ -18,7 +20,9 @@ const Info = ({ workerData, setWorkerData, onNext }) => {
 
   return (
     <View style={styles.info__mainContainer}>
-      <Text style={styles.info__title}>Crear perfil de trabajador</Text>
+      <Text style={styles.info__title}>
+        {isEditMode ? "Editar perfil de trabajador" : "Crear perfil de trabajador"}
+      </Text>
       <Text style={styles.info__step}>Paso 1 de 4</Text>
 
       <View style={styles.info__progressContainer}>

@@ -5,7 +5,7 @@ import { styles } from "./HeaderStyles";
 import { colors } from "../../../../styles/globalStyles";
 import { UserContext } from "../../../../context/UserContext";
 
-const Header = ({ status, onPressStatus }) => {
+const Header = ({ status, onPressStatus, onPressSettings = () => {} }) => {
   const { user } = useContext(UserContext);
 
   // Construir el nombre completo: name + lastName
@@ -27,6 +27,7 @@ const Header = ({ status, onPressStatus }) => {
           <TouchableOpacity
             style={styles.home__header__settingsBtn}
             activeOpacity={0.7}
+            onPress={onPressSettings}
           >
             <Ionicons name="settings-sharp" size={18} color={colors.black} />
           </TouchableOpacity>

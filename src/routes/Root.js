@@ -6,6 +6,7 @@ import Home from "../pages/home/Home";
 import JobApply from "../pages/jobApply/JobApply";
 import CurrentWork from "../pages/currentWork/CurrentWork";
 import Messages from "../pages/messages/Messages";
+import Profile from "../pages/profile/Profile";
 import { UserContext } from "../context/UserContext";
 import AuthRoutes from "./AuthRoutes";
 import LocationRoutes from "./LocationRoutes";
@@ -42,6 +43,8 @@ const Root = () => {
                   <Stack.Screen name="JobApply" component={JobApply} />
                   <Stack.Screen name="CurrentWork" component={CurrentWork} />
                   <Stack.Screen name="Messages" component={Messages} />
+                  <Stack.Screen name="Profile" component={Profile} />
+                  <Stack.Screen name="ProfileEdit" component={Onboarding} />
                 </>
               ) : (
                 <Stack.Screen name="Location" component={LocationRoutes} />
