@@ -11,12 +11,16 @@ import AuthRoutes from "./AuthRoutes";
 import LocationRoutes from "./LocationRoutes";
 import Loading from "../components/loading/Loading";
 import { LocationContext } from "../context/LocationContext";
+import useWorkerLocationUpdates from "../hooks/useWorkerLocationUpdates";
 
 const Stack = createNativeStackNavigator();
 
 const Root = () => {
   const { user, loading } = useContext(UserContext);
-  const { location } = useContext(LocationContext);
+  const { location, trackingCurrent } = useContext(LocationContext);
+
+  // Actualización periódica de ubicación cuando el trabajador eligió "Mi ubicación actual"
+  useWorkerLocationUpdates({ enabled: !!user && trackingCurrent, uid: user?.uid, intervalMs: 4000000 });
 
   if (loading) return <Loading />;
 

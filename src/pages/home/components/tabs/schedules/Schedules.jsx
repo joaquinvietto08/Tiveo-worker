@@ -77,7 +77,7 @@ const Schedules = () => {
 
         {/* Cliente */}
         <Text style={styles.schedules__client}>
-          {item.client?.displayName || "Usuario desconocido"}
+          {item.client?.displayName || "Cliente desconocido"}
         </Text>
 
         {/* Dirección */}

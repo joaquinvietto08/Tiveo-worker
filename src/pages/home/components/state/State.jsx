@@ -1,23 +1,26 @@
 import React, { useState, useContext } from "react";
 import { View, Text, TouchableOpacity, Pressable } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import { styles } from "./StateStyles";
 import StateModal from "./stateModal/StateModal";
 import { UserContext } from "../../../../context/UserContext";
 import { LocationContext } from "../../../../context/LocationContext";
 import { getFirestore, doc, updateDoc } from "firebase/firestore";
 import { FIREBASE_APP } from "../../../../config/firebaseConfig";
+import { colors } from "../../../../styles/globalStyles";
 
 const State = () => {
   const { user } = useContext(UserContext);
-  const { location, setLocation } = useContext(LocationContext);
+  const { location, setLocation, trackingCurrent, setTrackingCurrent } = useContext(LocationContext);
   const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(false);
-  const displayLocation =
-    location?.name ??
-    (location?.formatted_address
-      ? location.formatted_address.split(",")[0]
-      : "Seleccionar ubicación");
+  const displayLocation = trackingCurrent
+    ? "Ubicación actual"
+    : location?.name ??
+      (location?.formatted_address
+        ? location.formatted_address.split(",")[0]
+        : "Seleccionar ubicación");
 
   // Mapeo entre estados en español (UI) y estados en inglés (Firebase)
   const statusMapToFirebase = {
@@ -124,9 +127,14 @@ const State = () => {
           style={styles.home__state__locationChip}
           onPress={() => {
             setLocation(null);
+            setTrackingCurrent(false);
           }}
         >
-          <Ionicons name="location-sharp" size={16} color="#8D8D8D" />
+          {trackingCurrent ? (
+            <FontAwesome6 name="location-crosshairs" size={16} color={colors.blue} />
+          ) : (
+            <Ionicons name="location-sharp" size={16} color="#8D8D8D" />
+          )}
           <Text
             style={styles.home__state__locationText}
             numberOfLines={1}

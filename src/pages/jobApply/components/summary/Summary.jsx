@@ -1,27 +1,13 @@
 import { View, Text } from "react-native";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { styles } from "./SummaryStyles";
-import { formatDate, formatTime } from "../../../../utils/formatHelpers";
+import { formatDate, formatTime, translateService } from "../../../../utils/formatHelpers";
+import { getIcon } from "../../../../utils/getIcons";
 
-const Summary = ({job}) => {
+const Summary = ({ job }) => {
   const hasDescription = job.description && job.description.trim() !== "";
   const services = job.services || [];
   const hasServices = services.length > 0;
-
-  const getServiceIcon = (service) => {
-    switch (service) {
-      case "electricity":
-        return <Ionicons name="flash-outline" size={16} color="#000" />;
-      case "plumbing":
-        return <MaterialCommunityIcons name="pipe" size={16} color="#000" />;
-      case "gas":
-        return <MaterialCommunityIcons name="fire" size={16} color="#000" />;
-      case "gardening":
-        return <MaterialCommunityIcons name="leaf" size={16} color="#000" />;
-      default:
-        return <Ionicons name="construct-outline" size={16} color="#000" />;
-    }
-  };
 
   const renderMoment = () => {
     if (job.moment === "now") {
@@ -38,8 +24,6 @@ const Summary = ({job}) => {
           job.scheduledDateTime
         )}`
       : "Fecha no disponible";
-
-    console.log(job.scheduledDateTime);
 
     return (
       <View style={styles.jobApply__summary__momentRow}>
@@ -82,14 +66,17 @@ const Summary = ({job}) => {
 
       {hasServices && (
         <View style={styles.jobApply__summary__chipsRow}>
-          {services.map((srv, i) => (
-            <View key={i} style={styles.jobApply__summary__chip}>
-              {getServiceIcon(srv)}
-              <Text style={styles.jobApply__summary__chipText}>
-                {srv.charAt(0).toUpperCase() + srv.slice(1)}
-              </Text>
-            </View>
-          ))}
+          {services.map((srv, index) => {
+            const ServiceIcon = getIcon(srv);
+            return (
+              <View key={index} style={styles.jobApply__summary__chip}>
+                <ServiceIcon width={16} height={16} />
+                <Text style={styles.jobApply__summary__chipText}>
+                  {translateService(srv)}
+                </Text>
+              </View>
+            );
+          })}
         </View>
       )}
     </View>

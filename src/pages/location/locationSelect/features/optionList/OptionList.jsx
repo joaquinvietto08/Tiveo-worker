@@ -6,8 +6,13 @@ import firestore from "@react-native-firebase/firestore";
 import { LocationContext } from "../../../../../context/LocationContext";
 import { UserContext } from "../../../../../context/UserContext";
 import { colors } from "../../../../../styles/globalStyles";
+import {
+  userLocation,
+  fetchAddressFromCoords,
+} from "../../../../../actions/api/userLocation";
+import * as geofire from "geofire-common";
 
-const DefaultItem = ({ item, navigation }) => {
+const DefaultItem = ({ item, navigation, onUseCurrentLocation }) => {
   let iconName;
 
   if (item.key === "1") {
@@ -18,7 +23,7 @@ const DefaultItem = ({ item, navigation }) => {
 
   const handlePress = () => {
     if (item.key === "1") {
-      navigation.navigate("LocationMap", { getLocation: true });
+      onUseCurrentLocation?.();
     } else if (item.key === "2") {
       navigation.navigate("LocationMap", { getLocation: false });
     }
@@ -30,7 +35,11 @@ const DefaultItem = ({ item, navigation }) => {
       onPress={handlePress}
     >
       <View style={styles.locationSelect__optionList__iconContainer}>
-        <FontAwesome6 name={iconName} size={18} color={colors.primary} />
+        <FontAwesome6
+          name={iconName}
+          size={18}
+          color={iconName === "location-crosshairs" ? colors.blue : colors.primary}
+        />
       </View>
       <View style={styles.locationSelect__optionList__subContainer}>
         <Text style={styles.locationSelect__optionList__optionName}>
@@ -73,11 +82,11 @@ const LocationItem = ({ item, onSelect }) => {
 
 const OptionList = ({ navigation, setShowLoading }) => {
   const [locations, setLocations] = useState([]);
-  const { setLocation } = useContext(LocationContext);
+  const { setLocation, setTrackingCurrent } = useContext(LocationContext);
   const { user } = useContext(UserContext);
 
   const defaultOptions = [
-    { key: "1", name: "Mi ubicación actual" },
+    { key: "1", name: "Usar ubicacion real" },
     { key: "2", name: "Seleccionar en el mapa" },
   ];
 
@@ -114,11 +123,51 @@ const OptionList = ({ navigation, setShowLoading }) => {
   const handleSelectLocation = (item) => {
     const { key, ...locationData } = item;
     setLocation(locationData);
+    // Selección manual/mapa: desactivar seguimiento de ubicación actual
+    setTrackingCurrent(false);
+  };
+
+  const handleUseCurrentLocation = async () => {
+    try {
+      setShowLoading?.(true);
+      const loc = await userLocation();
+      const { latitude, longitude } = loc.coords;
+
+      const fetchedAddress = await fetchAddressFromCoords(latitude, longitude);
+      const geohash = geofire.geohashForLocation([latitude, longitude]);
+
+      const locationData = fetchedAddress || {};
+      locationData.geometry = {
+        ...(locationData.geometry || {}),
+        location: { lat: latitude, lng: longitude },
+        geohash,
+      };
+
+      setLocation(locationData);
+      setTrackingCurrent(true);
+
+      await firestore().collection("workers").doc(user.uid).update({
+        geohash,
+        lat: latitude,
+        lng: longitude,
+        updatedAt: firestore.FieldValue.serverTimestamp(),
+      });
+    } catch (e) {
+      console.warn("No se pudo usar la ubicación actual:", e?.message || e);
+    } finally {
+      setShowLoading?.(false);
+    }
   };
 
   const renderItem = ({ item }) => {
     if (item.key === "1" || item.key === "2") {
-      return <DefaultItem item={item} navigation={navigation} />;
+      return (
+        <DefaultItem
+          item={item}
+          navigation={navigation}
+          onUseCurrentLocation={handleUseCurrentLocation}
+        />
+      );
     } else {
       return <LocationItem item={item} onSelect={handleSelectLocation} />;
     }

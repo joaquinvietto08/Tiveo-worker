@@ -3,7 +3,7 @@ import { colors } from "../../../../styles/globalStyles";
 
 export const styles = StyleSheet.create({
   home__currentWork__container: {
-    backgroundColor: colors.primary,
+    backgroundColor: colors.black,
     borderRadius: 18,
     paddingVertical: 18,
     paddingHorizontal: 20,

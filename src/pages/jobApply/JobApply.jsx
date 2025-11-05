@@ -37,10 +37,12 @@ const JobApply = ({ route, navigation }) => {
   const postulationData = usePostulationValues(
     job,
     budget,
-    message,
+    message, 
     date,
     offerAnotherTime
   );
+
+  console.log(job)
 
   const handleSubmit = async () => {
     try {
@@ -48,12 +50,26 @@ const JobApply = ({ route, navigation }) => {
       setIsSubmitting(true);
 
       if (job.type === "direct") {
-        // 🔹 Trabajo directo: actualizamos la activity existente
-        const activityRef = doc(db, "activities", job.id);
-        await updateDoc(activityRef, {
-          status: "confirm",
-        });
-        console.log("✅ Trabajo directo confirmado");
+        // 🔹 Trabajo directo: crear activity a partir de la request mediante endpoint
+        const response = await fetch(
+          "https://createactivityfromrequest-fpeb5gaoea-uc.a.run.app",
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              requestId: job.id,
+              newStatus: "confirm",
+            }),
+          }
+        );
+
+        if (!response.ok) {
+          const text = await response.text();
+          throw new Error(`Error HTTP ${response.status}: ${text}`);
+        }
+
+        const data = await response.json().catch(() => ({}));
+        console.log("✅ Trabajo directo confirmado", data);
       } else {
         // 🔹 Postulación normal: agregamos nuevo documento
         await addDoc(collection(db, "postulations"), {
