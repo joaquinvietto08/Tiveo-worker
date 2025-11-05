@@ -18,18 +18,16 @@ export const styles = StyleSheet.create({
 
   messages__chat__item__other: {
     alignSelf: "flex-start",
-    backgroundColor: colors.white,
-    borderWidth: 1,
-    borderColor: colors.lightGray,
+    backgroundColor: colors.primary,
   },
 
   messages__chat__item__me: {
     alignSelf: "flex-end",
-    backgroundColor: colors.primary,
+    backgroundColor: colors.black,
   },
 
   messages__chat__text: {
-    color: colors.black,
+    color: colors.white,
     fontFamily: "Inter-Regular",
   },
 
@@ -42,7 +40,7 @@ export const styles = StyleSheet.create({
     fontSize: 12,
     fontFamily: "Inter-Regular",
     textAlign: "right",
-    color: colors.black,
+    color: colors.white,
   },
 
   messages__chat__time__me: {
@@ -66,14 +64,13 @@ export const styles = StyleSheet.create({
 
   messages__chat__image__other: {
     alignSelf: "flex-start",
-    backgroundColor: colors.white,
-    borderWidth: 1,
+    backgroundColor: colors.primary,
     borderColor: colors.lightGray,
   },
 
   messages__chat__image__me: {
     alignSelf: "flex-end",
-    backgroundColor: colors.primary,
+    backgroundColor: colors.black,
   },
 
   messages__chat__timeImage: {

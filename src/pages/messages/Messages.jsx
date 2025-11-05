@@ -3,15 +3,15 @@ import { StatusBar, View } from "react-native";
 import { styles } from "./MessagesStyles";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { colors } from "../../styles/globalStyles";
-/* import Chat from "./features/chat/Chat";
-import Bottom from "./features/bottom/Bottom"; */
+import Chat from "./features/chat/Chat";
+import Bottom from "./features/bottom/Bottom";
 import Header from "./features/header/Header";
 import { UserContext } from "../../context/UserContext";
-/* import {
+import {
   listenMessages,
-  sendTextMessage, 
+  sendTextMessage,
   sendImageMessage,
-} from "./utils/firebaseChat"; */
+} from "./utils/firebaseChat";
 
 const formatTime = (ts) => {
   try {
@@ -31,16 +31,18 @@ const Messages = ({ route }) => {
   const { user } = useContext(UserContext);
   const myUid = user?.uid;
   const [rawMessages, setRawMessages] = useState([]);
+  const activityId = activity?.id;
+  const clientId = activity?.client?.clientId;
 
   // Suscripción a Firestore
-  /*   useEffect(() => {
+  useEffect(() => {
     if (!activityId) return;
     const unsub = listenMessages(activityId, setRawMessages);
     return () => unsub && unsub();
-  }, [activityId]); */
+  }, [activityId]);
 
   // Mapear a lo que tu Chat espera
-  /*   const DATA = useMemo(() => {
+  const DATA = useMemo(() => {
     return rawMessages.map((m) => {
       return {
         id: m.id,
@@ -51,14 +53,15 @@ const Messages = ({ route }) => {
         timestamp: formatTime(m.createdAt),
       };
     });
-  }, [rawMessages, myUid]); */
+  }, [rawMessages, myUid]);
 
-  /*   const handleSendText = async (text) => {
+  const handleSendText = async (text) => {
     if (!text?.trim()) return;
     await sendTextMessage({
       activityId,
       text: text.trim(),
-      clientId: myUid,
+      workerId: myUid,
+      clientId,
     });
   };
 
@@ -68,8 +71,8 @@ const Messages = ({ route }) => {
       console.warn("Faltan ids", { activityId, myUid });
       return;
     }
-    await sendImageMessage({ activityId, uri, clientId: myUid });
-  }; */
+    await sendImageMessage({ activityId, uri, workerId: myUid, clientId });
+  };
 
   return (
     <View
@@ -80,8 +83,8 @@ const Messages = ({ route }) => {
     >
       <StatusBar backgroundColor={colors.white} barStyle="dark-content" />
       <Header client={activity.client} />
-      {/*       <Chat data={[...DATA].reverse()} />
-      <Bottom onSendText={handleSendText} onSendImage={handleSendImage} /> */}
+      <Chat data={[...DATA].reverse()} />
+      <Bottom onSendText={handleSendText} onSendImage={handleSendImage} />
     </View>
   );
 };

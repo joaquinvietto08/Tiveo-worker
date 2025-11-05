@@ -20,7 +20,7 @@ const Header = ({client}) => {
       <View style={styles.messages__header__clientContainer}>
         <MaterialCommunityIcons name="account-circle" size={40} color={colors.gray} />
         <Text style={styles.messages__header__nameText} numberOfLines={2}>
-          {client.displayName ?? "Cliente" }
+          {client?.displayName ?? "Cliente" }
         </Text>
       </View>
     </View>

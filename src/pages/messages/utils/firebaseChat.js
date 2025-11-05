@@ -21,11 +21,11 @@ export async function ensureConversation(activityId, clientId, workerId) {
 export async function sendTextMessage({
   activityId,
   text,
-  clientId,
   workerId,
+  clientId,
 }) {
   if (!activityId) throw new Error("activityId requerido");
-  if (!clientId) throw new Error("clientId requerido");
+  if (!workerId) throw new Error("workerId requerido");
 
   const convoRef = await ensureConversation(activityId, clientId, workerId);
   const msgRef = convoRef.collection("messages").doc();
@@ -33,8 +33,9 @@ export async function sendTextMessage({
   await msgRef.set({
     type: "text",
     text: text ?? "",
-    clientId,
-    sender: "client",
+    clientId: clientId ?? null,
+    workerId,
+    sender: "worker",
     createdAt: firestore.FieldValue.serverTimestamp(),
   });
 
@@ -43,9 +44,14 @@ export async function sendTextMessage({
 
 /* ***************************************************************************** */
 
-export async function sendImageMessage({ activityId, uri, clientId, workerId }) {
+export async function sendImageMessage({
+  activityId,
+  uri,
+  workerId,
+  clientId,
+}) {
   if (!activityId) throw new Error("activityId requerido");
-  if (!clientId) throw new Error("clientId requerido");
+  if (!workerId) throw new Error("workerId requerido");
   if (!uri) throw new Error("uri requerido");
 
   const convoRef = await ensureConversation(activityId, clientId, workerId);
@@ -53,8 +59,9 @@ export async function sendImageMessage({ activityId, uri, clientId, workerId }) 
 
   await msgRef.set({
     type: "image",
-    clientId,
-    sender: "client",
+    clientId: clientId ?? null,
+    workerId,
+    sender: "worker",
     imageUrl: null,
     createdAt: firestore.FieldValue.serverTimestamp(),
   });

@@ -3,7 +3,7 @@ import { colors } from "../../../../styles/globalStyles";
 
 export const styles = StyleSheet.create({
   messages__bottom__container: {
-    backgroundColor: colors.backgroundColor,
+    backgroundColor: colors.background,
     paddingVertical: 20,
     alignItems: "flex-end",
     paddingHorizontal: 15,

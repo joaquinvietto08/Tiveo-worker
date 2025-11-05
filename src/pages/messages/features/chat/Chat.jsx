@@ -12,7 +12,7 @@ import { styles } from "./ChatStyles";
 
 const ChatItem = React.memo(
   ({ text, sender, timestamp, type, imageUrl, onImagePress }) => {
-    const isMe = sender === "client";
+    const isMe = sender === "worker";
 
     return (
       <>
