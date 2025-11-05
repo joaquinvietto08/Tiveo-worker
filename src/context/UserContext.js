@@ -63,7 +63,9 @@ export function UserProvider({ children }) {
       setActivities([]);
       setRequests([]);
       setPostulations([]);
-      setLoading(false);
+      // Importante: no tocar `loading` aquí.
+      // El estado de `loading` para "no hay usuario" lo maneja la suscripción de Auth.
+      // De esta forma evitamos el parpadeo de AuthRoutes antes de que Firebase resuelva la sesión.
       // Reset flags cuando no hay user
       loadedFlags.current = {
         activity: false,
