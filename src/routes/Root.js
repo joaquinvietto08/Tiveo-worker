@@ -9,6 +9,7 @@ import Messages from "../pages/messages/Messages";
 import Profile from "../pages/profile/Profile";
 import ActivityDetail from "../pages/activityDetail/ActivityDetail";
 import Support from "../pages/support/Support";
+import Payment from "../pages/payment/Payment";
 import { UserContext } from "../context/UserContext";
 import AuthRoutes from "./AuthRoutes";
 import LocationRoutes from "./LocationRoutes";
@@ -49,6 +50,7 @@ const Root = () => {
                   <Stack.Screen name="ProfileEdit" component={Onboarding} />
                   <Stack.Screen name="ActivityDetail" component={ActivityDetail} />
                   <Stack.Screen name="Support" component={Support} />
+                  <Stack.Screen name="Payment" component={Payment} />
                 </>
               ) : (
                 <Stack.Screen name="Location" component={LocationRoutes} />

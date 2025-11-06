@@ -15,6 +15,11 @@ const Buttons = ({ activity }) => {
 
   // --- Avanzar estado ---
   const handleNextStatus = async () => {
+    // Si el trabajo ya está finalizado, navegar a la pantalla de cobro
+    if (activity.status === "done") {
+      navigation.navigate("Payment", { activity });
+      return;
+    }
     const nextStatusMap = {
       confirm: "going",
       going: "on-progress",
@@ -99,11 +104,17 @@ const Buttons = ({ activity }) => {
           color: colors.green,
         };
       default:
-        return {
-          text: "Cobrar trabajo",
-          icon: "attach-money",
-          color: colors.primary,
-        };
+        return activity.status === "done"
+          ? {
+              text: "Cobrar trabajo",
+              icon: "attach-money",
+              color: colors.primary,
+            }
+          : {
+              text: "Marcar como en camino",
+              icon: "directions-walk",
+              color: "#4E73DF",
+            };
     }
   };
 

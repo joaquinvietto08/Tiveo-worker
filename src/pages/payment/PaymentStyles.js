@@ -1,0 +1,207 @@
+import { StyleSheet } from "react-native";
+import { colors } from "../../styles/globalStyles";
+
+export const styles = StyleSheet.create({
+  payment__container: {
+    flex: 1,
+    backgroundColor: colors.white,
+  },
+  payment__header: {
+    paddingHorizontal: 8,
+    paddingTop: 8,
+  },
+  payment__backBtn: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  payment__content: {
+    padding: 16,
+    gap: 16,
+  },
+  payment__titleRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+  },
+  payment__title: {
+    fontSize: 22,
+    color: colors.black,
+    fontFamily: "Inter-Bold",
+  },
+  payment__subtitle: {
+    fontSize: 16,
+    color: colors.black,
+    fontFamily: "Inter-Regular",
+  },
+  payment__bold: {
+    fontFamily: "Inter-Bold",
+  },
+  payment__card: {
+    backgroundColor: colors.white,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: colors.lightGray,
+    padding: 14,
+    gap: 12,
+  },
+  payment__sectionTitle: {
+    fontSize: 16,
+    color: colors.black,
+    fontFamily: "Inter-SemiBold",
+  },
+  payment__chipsRow: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 8,
+  },
+  payment__chip: {
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    backgroundColor: colors.background,
+    borderRadius: 999,
+  },
+  payment__chipText: {
+    fontSize: 13,
+    color: colors.black,
+    fontFamily: "Inter-Medium",
+  },
+  payment__muted: {
+    color: colors.gray,
+    fontSize: 14,
+    fontFamily: "Inter-Regular",
+  },
+  payment__toggleRow: {
+    flexDirection: "row",
+    backgroundColor: colors.background,
+    borderRadius: 10,
+    padding: 4,
+    gap: 6,
+  },
+  payment__toggleBtn: {
+    flex: 1,
+    backgroundColor: "transparent",
+    paddingVertical: 10,
+    borderRadius: 8,
+    alignItems: "center",
+  },
+  payment__toggleBtnActive: {
+    backgroundColor: colors.white,
+    borderWidth: 1,
+    borderColor: colors.lightGray,
+  },
+  payment__toggleText: {
+    color: colors.gray,
+    fontFamily: "Inter-Medium",
+  },
+  payment__toggleTextActive: {
+    color: colors.black,
+    fontFamily: "Inter-Medium",
+  },
+  payment__input: {
+    borderWidth: 1,
+    borderColor: colors.lightGray,
+    borderRadius: 10,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    fontSize: 16,
+    color: colors.black,
+    backgroundColor: colors.white,
+    fontFamily: "Inter-Regular",
+  },
+  payment__hint: {
+    fontSize: 12,
+    color: colors.gray,
+    fontFamily: "Inter-Regular",
+  },
+  payment__row: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: 10,
+  },
+  payment__label: {
+    flex: 1,
+    fontSize: 15,
+    color: colors.black,
+    fontFamily: "Inter-Regular",
+  },
+  payment__inputInline: {
+    width: 110,
+    borderWidth: 1,
+    borderColor: colors.lightGray,
+    borderRadius: 10,
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+    textAlign: "right",
+    color: colors.black,
+    backgroundColor: colors.white,
+    fontFamily: "Inter-Regular",
+  },
+  payment__totalRow: {
+    marginTop: 8,
+    paddingTop: 10,
+    borderTopWidth: 1,
+    borderTopColor: colors.lightGray,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  payment__totalLabel: {
+    fontSize: 16,
+    color: colors.black,
+    fontFamily: "Inter-SemiBold",
+  },
+  payment__totalValue: {
+    fontSize: 16,
+    color: colors.black,
+    fontFamily: "Inter-Bold",
+  },
+  payment__statusCard: {
+    backgroundColor: colors.white,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: colors.lightGray,
+    padding: 14,
+    gap: 10,
+  },
+  payment__statusTitle: {
+    fontSize: 14,
+    color: colors.gray,
+    fontFamily: "Inter-Regular",
+  },
+  payment__statusPending: {
+    color: colors.primary,
+    fontSize: 16,
+    fontFamily: "Inter-Bold",
+  },
+  payment__modifyBtn: {
+    marginTop: 4,
+    alignSelf: "flex-start",
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 8,
+    backgroundColor: colors.black,
+  },
+  payment__modifyText: {
+    color: colors.white,
+    fontFamily: "Inter-SemiBold",
+  },
+  payment__submitBtn: {
+    marginTop: 8,
+    backgroundColor: colors.primary,
+    paddingVertical: 14,
+    borderRadius: 12,
+    alignItems: "center",
+  },
+  payment__submitBtnDisabled: {
+    opacity: 0.6,
+  },
+  payment__submitText: {
+    color: colors.white,
+    fontSize: 16,
+    fontFamily: "Inter-Bold",
+  },
+});
