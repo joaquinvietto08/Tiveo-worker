@@ -18,10 +18,12 @@ import {
   getFirestore,
   collection,
   addDoc,
+  updateDoc,
   serverTimestamp,
   query,
   where,
   getDocs,
+  doc,
 } from "firebase/firestore";
 import { FIREBASE_APP } from "../../config/firebaseConfig";
 import { UserContext } from "../../context/UserContext";
@@ -29,7 +31,7 @@ import { UserContext } from "../../context/UserContext";
 const Payment = ({ route }) => {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation();
-  const { user } = useContext(UserContext);
+  const { user, setActivities } = useContext(UserContext);
   const activity = route?.params?.activity || {};
   const categories = activity?.services || [];
   const clientName = activity?.client?.displayName || "Cliente";
@@ -110,6 +112,21 @@ const Payment = ({ route }) => {
       const ref = await addDoc(collection(db, "payments"), payload);
       setPaymentId(ref.id);
       setCurrentStatus("pending");
+      // Flag en la actividad para bloquear volver atrás
+      if (activityId) {
+        const actRef = doc(db, "activities", activityId);
+        await updateDoc(actRef, { paymentStatus: "pending-to-pay" });
+        // Update local cache inmediatamente
+        if (typeof setActivities === "function") {
+          setActivities((prev) =>
+            Array.isArray(prev)
+              ? prev.map((a) =>
+                  a.id === activityId ? { ...a, paymentStatus: "pending-to-pay" } : a
+                )
+              : prev
+          );
+        }
+      }
     } catch (e) {
       console.error("Error creando el pago", e);
     } finally {

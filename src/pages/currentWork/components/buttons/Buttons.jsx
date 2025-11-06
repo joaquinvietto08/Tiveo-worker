@@ -119,8 +119,9 @@ const Buttons = ({ activity }) => {
   };
 
   const actionData = getActionButtonData();
+  const lockedByPayment = activity?.paymentStatus === "pending-to-pay";
   const canGoBack =
-    activity.status !== "confirm" && activity.status !== "starting";
+    activity.status !== "confirm" && activity.status !== "starting" && !lockedByPayment;
 
   return (
     <View style={styles.currentWork__buttons__container}>
@@ -148,7 +149,10 @@ const Buttons = ({ activity }) => {
             { backgroundColor: colors.lightGray },
           ]}
           activeOpacity={0.85}
-          onPress={handlePrevStatus}
+          onPress={() => {
+            if (lockedByPayment) return;
+            handlePrevStatus();
+          }}
         >
           <MaterialIcons name="undo" size={22} color={colors.black} />
           <Text
