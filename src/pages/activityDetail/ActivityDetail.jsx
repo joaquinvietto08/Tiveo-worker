@@ -111,7 +111,7 @@ const ActivityDetail = ({ route, navigation }) => {
             cancelLabel={cancelLabel}
             isCancelling={isCancelling}
           />
-          <HelpButton onPress={() => {}} />
+          <HelpButton onPress={() => navigation.navigate("Support", { activityId: activity.id })} />
         </ScrollView>
       ) : (
         <ScrollView
@@ -131,7 +131,7 @@ const ActivityDetail = ({ route, navigation }) => {
               listado y abrirla nuevamente.
             </Text>
           </View>
-          <HelpButton onPress={() => {}} />
+          <HelpButton onPress={() => navigation.navigate("Support")} />
         </ScrollView>
       )}
 
