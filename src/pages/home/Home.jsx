@@ -54,8 +54,8 @@ const Home = ({ navigation }) => {
         <Tabs activeTab={activeTab} setActiveTab={setActiveTab} />
         {{
           Solicitudes: <Requests />,
-          Programadas: <Schedules />,
-          Completadas: <Completed />,
+          Programadas: <Schedules navigation={navigation}/>,
+          Completadas: <Completed navigation={navigation} />,
         }[activeTab] || null}
       </ScrollView>
     </View>

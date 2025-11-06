@@ -10,7 +10,7 @@ import {
 } from "../../../../../utils/formatHelpers";
 import { getIcon } from "../../../../../utils/getIcons";
 
-const Completed = () => {
+const Completed = ({ navigation }) => {
   const { activities } = useContext(UserContext);
 
   const completeActivities = activities.filter(
@@ -75,7 +75,13 @@ const Completed = () => {
                 </TouchableOpacity>
               )}
 
-              <TouchableOpacity style={styles.completed__detailsButton}>
+              <TouchableOpacity
+                style={styles.completed__detailsButton}
+                onPress={() =>
+                  navigation?.navigate("ActivityDetail", { activityId: item.id })
+                }
+                activeOpacity={0.8}
+              >
                 <Text style={styles.completed__detailsButtonText}>
                   Ver detalles
                 </Text>

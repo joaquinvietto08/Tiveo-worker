@@ -12,17 +12,15 @@ import { styles } from "./SchedulesStyles";
 import { UserContext } from "../../../../../context/UserContext";
 import { getFirestore, doc, updateDoc } from "firebase/firestore";
 import { FIREBASE_APP } from "../../../../../config/firebaseConfig";
-import { useNavigation } from "@react-navigation/native";
 import Busy from "../../../../../../assets/svgs/worker/busy.svg";
 import Available from "../../../../../../assets/svgs/worker/available.svg";
 import { colors } from "../../../../../styles/globalStyles";
 import { getIcon } from "../../../../../utils/getIcons";
 import { translateService } from "../../../../../utils/formatHelpers";
 
-const Schedules = () => {
+const Schedules = ({ navigation }) => {
   const [selectedImage, setSelectedImage] = useState(null);
   const { activities } = useContext(UserContext);
-  const navigation = useNavigation();
 
   const activeActivities = activities.filter(
     (item) => item.status !== "done" && item.status !== "cancelled"
@@ -140,7 +138,12 @@ const Schedules = () => {
 
         {/* Botones */}
         <View style={styles.schedules__buttonsRow}>
-          <TouchableOpacity style={styles.schedules__buttonDetails}>
+          <TouchableOpacity
+            style={styles.schedules__buttonDetails}
+            onPress={() =>
+              navigation?.navigate("ActivityDetail", { activityId: item.id })
+            }
+          >
             <Text style={styles.schedules__buttonDetailsText}>
               Ver detalles
             </Text>
