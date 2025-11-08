@@ -1,5 +1,12 @@
-import React from "react";
-import { View, Text, TouchableOpacity } from "react-native";
+import React, { useState } from "react";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  ScrollView,
+  Image,
+  Modal,
+} from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import { styles } from "./BodyStyles";
 import {
@@ -8,15 +15,29 @@ import {
   translateService,
 } from "../../../../utils/formatHelpers";
 import { getIcon } from "../../../../utils/getIcons";
+import { useNavigation } from "@react-navigation/native";
 
 const Body = ({ activity }) => {
+  const navigation = useNavigation();
+  const [selectedImage, setSelectedImage] = useState(null);
   const {
     description,
     client,
     address,
     scheduledDateTime,
     services = [],
+    images = [],
   } = activity;
+
+  const hasImages = Array.isArray(images) && images.length > 0;
+
+  const handleOpenMap = () => {
+    console.log(activity)
+    navigation.navigate("CurrentWorkMap", {
+      activityId: activity?.id,
+      activity,
+    });
+  };
 
   // 🕒 Formatear fecha y hora si existen
   const formattedDateTime = scheduledDateTime
@@ -57,6 +78,16 @@ const Body = ({ activity }) => {
               {address.address}
             </Text>
           </View>
+          <TouchableOpacity
+            style={styles.currentWork__body__mapButton}
+            activeOpacity={0.85}
+            onPress={handleOpenMap}
+          >
+            <MaterialIcons name="map" size={18} color="#fff" />
+            <Text style={styles.currentWork__body__mapButtonText}>
+              Ver mapa
+            </Text>
+          </TouchableOpacity>
         </View>
       )}
 
@@ -95,6 +126,48 @@ const Body = ({ activity }) => {
           </View>
         </View>
       )}
+
+      {/* Imágenes del cliente */}
+      {hasImages && (
+        <View style={styles.currentWork__body__section}>
+          <Text style={styles.currentWork__body__sectionTitle}>
+            Imágenes del cliente
+          </Text>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            style={styles.currentWork__body__imagesContainer}
+          >
+            {images.map((uri, idx) => (
+              <TouchableOpacity
+                key={idx}
+                onPress={() => setSelectedImage(uri)}
+                activeOpacity={0.8}
+              >
+                <Image
+                  source={{ uri }}
+                  style={styles.currentWork__body__imageThumb}
+                />
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+        </View>
+      )}
+
+      <Modal visible={!!selectedImage} transparent animationType="fade">
+        <View style={styles.currentWork__body__modalOverlay}>
+          <TouchableOpacity
+            style={styles.currentWork__body__modalOverlay}
+            onPress={() => setSelectedImage(null)}
+            activeOpacity={1}
+          >
+            <Image
+              source={{ uri: selectedImage }}
+              style={styles.currentWork__body__modalImage}
+            />
+          </TouchableOpacity>
+        </View>
+      </Modal>
     </View>
   );
 };

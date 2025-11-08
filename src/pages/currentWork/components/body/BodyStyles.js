@@ -69,6 +69,21 @@ export const styles = StyleSheet.create({
     color: colors.black,
     marginLeft: 6,
   },
+  currentWork__body__mapButton: {
+    marginTop: 10,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 10,
+    paddingVertical: 10,
+    backgroundColor: colors.black,
+    gap: 8,
+  },
+  currentWork__body__mapButtonText: {
+    color: colors.white,
+    fontFamily: "Inter-SemiBold",
+    fontSize: 14,
+  },
   currentWork__body__servicesRow: {
     flexDirection: "row",
     flexWrap: "wrap",
@@ -89,5 +104,30 @@ export const styles = StyleSheet.create({
     fontSize: 14,
     color: colors.black,
     marginLeft: 4,
+  },
+  currentWork__body__imagesContainer: {
+    marginTop: 8,
+  },
+  currentWork__body__imageThumb: {
+    width: 70,
+    height: 70,
+    borderRadius: 8,
+    marginRight: 8,
+  },
+  currentWork__body__modalOverlay: {
+    position: "absolute",
+    top: 0,
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: "rgba(0,0,0,0.8)",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  currentWork__body__modalImage: {
+    width: "90%",
+    height: "70%",
+    resizeMode: "contain",
+    borderRadius: 10,
   },
 });
