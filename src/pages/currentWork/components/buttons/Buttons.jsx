@@ -21,6 +21,7 @@ const Buttons = ({ activity }) => {
       return;
     }
     const nextStatusMap = {
+      starting: "going",
       confirm: "going",
       going: "on-progress",
       "on-progress": "done",
