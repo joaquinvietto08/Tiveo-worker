@@ -59,6 +59,7 @@ const Schedules = ({ navigation }) => {
   const renderCard = (item) => {
     const hasDescription = item.description && item.description.trim() !== "";
     const hasServices = item.services?.length > 0;
+    const hasImages = item.images?.length > 0;
 
     return (
       <View key={item.id} style={styles.schedules__card}>
@@ -133,6 +134,33 @@ const Schedules = ({ navigation }) => {
                 );
               })}
             </View>
+          </View>
+        )}
+
+        {/* Imágenes del cliente */}
+        {hasImages && (
+          <View style={styles.schedules__imagesSection}>
+            <Text style={styles.schedules__sectionLabel}>
+              Imágenes del cliente
+            </Text>
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              style={styles.schedules__imagesContainer}
+            >
+              {item.images.map((uri, idx) => (
+                <TouchableOpacity
+                  key={idx}
+                  onPress={() => setSelectedImage(uri)}
+                  activeOpacity={0.8}
+                >
+                  <Image
+                    source={{ uri }}
+                    style={styles.schedules__imageThumb}
+                  />
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
           </View>
         )}
 

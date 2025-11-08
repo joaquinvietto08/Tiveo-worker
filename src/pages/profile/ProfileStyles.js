@@ -9,8 +9,8 @@ export const styles = StyleSheet.create({
   profile__header: {
     flexDirection: "row",
     alignItems: "center",
-    paddingHorizontal: 24,
     marginBottom: 16,
+    paddingTop: 20
   },
   profile__backBtn: {
     width: 40,
@@ -22,13 +22,10 @@ export const styles = StyleSheet.create({
   },
   profile__headerTitle: {
     flex: 1,
-    textAlign: "center",
     fontSize: 20,
+    paddingLeft: 68,
     fontFamily: "Inter-Medium",
     color: colors.black,
-  },
-  profile__headerSpacer: {
-    width: 40,
   },
   profile__content: {
     paddingHorizontal: 24,

@@ -94,6 +94,18 @@ export const styles = StyleSheet.create({
     color: colors.black,
     fontFamily: "Inter-Medium",
   },
+  schedules__imagesSection: {
+    marginBottom: 12,
+  },
+  schedules__imagesContainer: {
+    marginTop: 6,
+  },
+  schedules__imageThumb: {
+    width: 70,
+    height: 70,
+    borderRadius: 8,
+    marginRight: 8,
+  },
   // --- Botones ---
   schedules__buttonsRow: {
     flexDirection: "row",
@@ -107,7 +119,7 @@ export const styles = StyleSheet.create({
     paddingVertical: 10,
     alignItems: "center",
     marginRight: 8,
-    width: "40%"
+    width: "40%",
   },
   schedules__buttonDetailsText: {
     color: colors.black,

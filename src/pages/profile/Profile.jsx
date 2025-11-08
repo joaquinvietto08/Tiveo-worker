@@ -16,10 +16,7 @@ import { UserContext } from "../../context/UserContext";
 import { translateService } from "../../utils/formatHelpers";
 import { getIcon } from "../../utils/getIcons";
 import { LocationContext } from "../../context/LocationContext";
-import {
-  getAuth,
-  signOut,
-} from "@react-native-firebase/auth";
+import { getAuth, signOut } from "@react-native-firebase/auth";
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import { AccessToken, LoginManager } from "react-native-fbsdk-next";
 
@@ -59,7 +56,8 @@ const Profile = ({ navigation }) => {
 
         if (providerId === "facebook.com") {
           try {
-            const currentAccessToken = await AccessToken.getCurrentAccessToken();
+            const currentAccessToken =
+              await AccessToken.getCurrentAccessToken();
             if (currentAccessToken) {
               await LoginManager.logOut();
               console.log("Sesión de Facebook cerrada.");
@@ -76,7 +74,7 @@ const Profile = ({ navigation }) => {
       console.log("No hay usuario autenticado.");
     }
   };
-  
+
   if (!user) {
     return (
       <View style={styles.profile__loaderContainer}>
@@ -105,27 +103,26 @@ const Profile = ({ navigation }) => {
       style={[
         styles.profile__container,
         {
-          paddingTop: insets.top + 20,
+          paddingTop: insets.top,
           paddingBottom: insets.bottom,
         },
       ]}
     >
       <StatusBar backgroundColor={colors.white} barStyle="dark-content" />
-      <View style={styles.profile__header}>
-        <TouchableOpacity
-          style={styles.profile__backBtn}
-          onPress={() => navigation.goBack()}
-          activeOpacity={0.7}
-        >
-          <Ionicons name="chevron-back" size={22} color={colors.black} />
-        </TouchableOpacity>
-        <Text style={styles.profile__headerTitle}>Perfil</Text>
-        <View style={styles.profile__headerSpacer} />
-      </View>
       <ScrollView
         contentContainerStyle={styles.profile__content}
         showsVerticalScrollIndicator={false}
       >
+        <View style={styles.profile__header}>
+          <TouchableOpacity
+            style={styles.profile__backBtn}
+            onPress={() => navigation.goBack()}
+            activeOpacity={0.7}
+          >
+            <Ionicons name="chevron-back" size={22} color={colors.black} />
+          </TouchableOpacity>
+          <Text style={styles.profile__headerTitle}>Mi cuenta</Text>
+        </View>
         <Image source={{ uri: photoUri }} style={styles.profile__avatar} />
         <Text style={styles.profile__name}>{fullName}</Text>
         {user.workerName ? (
