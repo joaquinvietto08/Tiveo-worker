@@ -8,7 +8,10 @@ import {
   orderBy,
   doc
 } from "firebase/firestore";
-import auth from "@react-native-firebase/auth";
+import {
+  getAuth,
+  onAuthStateChanged,
+} from "@react-native-firebase/auth";
 import { getApp } from "firebase/app";
 
 export const UserContext = createContext();
@@ -27,13 +30,14 @@ export function UserProvider({ children }) {
     postulations: false,
   });
 
-  const db = getFirestore(getApp()); 
+  const db = getFirestore(getApp());
+  const authInstance = getAuth();
 
   // 🔐 Escuchar sesión de Firebase Auth y luego traer el worker
   useEffect(() => {
     let unsubscribeWorker = null;
 
-    const unsubscribeAuth = auth().onAuthStateChanged((authUser) => {
+    const unsubscribeAuth = onAuthStateChanged(authInstance, (authUser) => {
       if (!authUser) {
         setUser(null);
         setLoading(false);

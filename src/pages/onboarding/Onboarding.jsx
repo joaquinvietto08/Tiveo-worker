@@ -8,7 +8,12 @@ import Description from "./steps/description/Description";
 import Services from "./steps/services/Services";
 import { UserContext } from "../../context/UserContext";
 import * as FileSystem from "expo-file-system";
-import storage from "@react-native-firebase/storage";
+import {
+  getStorage,
+  ref as storageRef,
+  putFile,
+  getDownloadURL,
+} from "@react-native-firebase/storage";
 import {
   doc,
   getFirestore,
@@ -25,6 +30,7 @@ const Onboarding = ({ navigation, route }) => {
   const { initialWorkerData, redirectTo } = params;
   const mode = params.mode === "edit" ? "edit" : "create";
   const isEditMode = mode === "edit";
+  const storage = useMemo(() => getStorage(), []);
   const db = useMemo(() => getFirestore(FIREBASE_APP), []);
 
   const [currentStep, setCurrentStep] = useState(1);
@@ -169,9 +175,9 @@ const Onboarding = ({ navigation, route }) => {
 
     if (typeof nextPhoto === "string" && nextPhoto.startsWith("file://")) {
       try {
-        const storageRef = storage().ref(`workers/${uid}/profile.jpg`);
-        await storageRef.putFile(nextPhoto);
-        const url = await storageRef.getDownloadURL();
+        const profileRef = storageRef(storage, `workers/${uid}/profile.jpg`);
+        await putFile(profileRef, nextPhoto);
+        const url = await getDownloadURL(profileRef);
         return url;
       } catch (uploadError) {
         console.error("❌ Error subiendo la foto del worker:", uploadError);

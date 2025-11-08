@@ -16,7 +16,10 @@ import { UserContext } from "../../context/UserContext";
 import { translateService } from "../../utils/formatHelpers";
 import { getIcon } from "../../utils/getIcons";
 import { LocationContext } from "../../context/LocationContext";
-import auth from "@react-native-firebase/auth";
+import {
+  getAuth,
+  signOut,
+} from "@react-native-firebase/auth";
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import { AccessToken, LoginManager } from "react-native-fbsdk-next";
 
@@ -24,6 +27,7 @@ const Profile = ({ navigation }) => {
   const insets = useSafeAreaInsets();
   const { user } = useContext(UserContext);
   const { setLocation } = useContext(LocationContext);
+  const authInstance = getAuth();
 
   const fullName = useMemo(() => {
     const name = user?.name || "";
@@ -35,13 +39,13 @@ const Profile = ({ navigation }) => {
   const services = Array.isArray(user.services) ? user.services : [];
 
   const handleSignOut = async () => {
-    const currentUser = auth().currentUser;
+    const currentUser = authInstance.currentUser;
     setLocation(null);
 
     if (currentUser) {
       const providerId = currentUser.providerData[0]?.providerId;
       try {
-        await auth().signOut();
+        await signOut(authInstance);
         console.log("Sesión cerrada en Firebase.");
 
         if (providerId === "google.com") {

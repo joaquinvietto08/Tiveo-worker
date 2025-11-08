@@ -1,12 +1,18 @@
 import { useEffect, useRef } from "react";
 import * as Location from "expo-location";
-import firestore from "@react-native-firebase/firestore";
+import {
+  getFirestore,
+  doc,
+  updateDoc,
+  serverTimestamp,
+} from "@react-native-firebase/firestore";
 import * as geofire from "geofire-common";
 
 // Actualiza periódicamente la ubicación del worker en Firestore
 // Escribe en workers/{uid}: { geohash, lat, lng, updatedAt }
 export default function useWorkerLocationUpdates({ enabled, uid, intervalMs = 400000 }) {
   const intervalRef = useRef(null);
+  const db = getFirestore();
 
   useEffect(() => {
     if (!enabled || !uid) {
@@ -37,9 +43,10 @@ export default function useWorkerLocationUpdates({ enabled, uid, intervalMs = 40
         const { latitude, longitude } = position.coords;
         const geohash = geofire.geohashForLocation([latitude, longitude]);
 
-        await firestore().collection("workers").doc(uid).update({
+        const workerRef = doc(db, "workers", uid);
+        await updateDoc(workerRef, {
           geohash,
-          updatedAt: firestore.FieldValue.serverTimestamp(),
+          updatedAt: serverTimestamp(),
         });
       } catch (e) {
         // Silenciar errores para no romper el flujo
@@ -58,4 +65,3 @@ export default function useWorkerLocationUpdates({ enabled, uid, intervalMs = 40
     };
   }, [enabled, uid, intervalMs]);
 }
-

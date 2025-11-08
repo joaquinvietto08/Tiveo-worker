@@ -2,7 +2,15 @@ import React, { useEffect, useState, useContext } from "react";
 import { FlatList, Pressable, Text, View } from "react-native";
 import { styles } from "./OptionListStyles";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
-import firestore from "@react-native-firebase/firestore";
+import {
+  getFirestore,
+  doc,
+  getDoc,
+  collection,
+  getDocs,
+  updateDoc,
+  serverTimestamp,
+} from "@react-native-firebase/firestore";
 import { LocationContext } from "../../../../../context/LocationContext";
 import { UserContext } from "../../../../../context/UserContext";
 import { colors } from "../../../../../styles/globalStyles";
@@ -84,6 +92,7 @@ const OptionList = ({ navigation, setShowLoading }) => {
   const [locations, setLocations] = useState([]);
   const { setLocation, setTrackingCurrent } = useContext(LocationContext);
   const { user } = useContext(UserContext);
+  const db = getFirestore();
 
   const defaultOptions = [
     { key: "1", name: "Usar ubicacion real" },
@@ -93,14 +102,14 @@ const OptionList = ({ navigation, setShowLoading }) => {
   useEffect(() => {
     const fetchAddresses = async () => {
       try {
-        const workerRef = firestore().collection("workers").doc(user.uid);
-        const workerSnapshot = await workerRef.get();
+        const workerRef = doc(db, "workers", user.uid);
+        const workerSnapshot = await getDoc(workerRef);
 
         if (!workerSnapshot.exists) {
           console.log("El worker no existe en Firestore.");
           return;
         }
-        const addressesSnapshot = await workerRef.collection("addresses").get();
+        const addressesSnapshot = await getDocs(collection(workerRef, "addresses"));
 
         const addressesList = addressesSnapshot.docs.map((doc) => ({
           key: doc.id,
@@ -146,11 +155,11 @@ const OptionList = ({ navigation, setShowLoading }) => {
       setLocation(locationData);
       setTrackingCurrent(true);
 
-      await firestore().collection("workers").doc(user.uid).update({
+      await updateDoc(doc(db, "workers", user.uid), {
         geohash,
         lat: latitude,
         lng: longitude,
-        updatedAt: firestore.FieldValue.serverTimestamp(),
+        updatedAt: serverTimestamp(),
       });
     } catch (e) {
       console.warn("No se pudo usar la ubicación actual:", e?.message || e);

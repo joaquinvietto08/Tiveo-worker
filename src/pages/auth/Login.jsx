@@ -5,19 +5,25 @@ import Facebook from "../../../assets/svgs/auth/facebook";
 import Google from "../../../assets/svgs/auth/google";
 import { signInWithGoogle } from "../../actions/api/google_auth";
 import { signInWithFacebook } from "../../actions/api/facebook_auth";
-import firestore from "@react-native-firebase/firestore";
+import {
+  getFirestore,
+  doc,
+  getDoc,
+  setDoc,
+} from "@react-native-firebase/firestore";
 import { colors } from "../../styles/globalStyles";
 
 const Login = () => {
   const insets = useSafeAreaInsets();
+  const db = getFirestore();
 
   const checkAndCreateClient = async (user) => {
     try {
-      const clientRef = firestore().collection("workers").doc(user.uid);
-      const clientSnapshot = await clientRef.get();
+      const clientRef = doc(db, "workers", user.uid);
+      const clientSnapshot = await getDoc(clientRef);
 
       if (!clientSnapshot.exists) {
-        await clientRef.set({
+        await setDoc(clientRef, {
           displayName: user.displayName,
           photoURL: user.photoURL,
         });

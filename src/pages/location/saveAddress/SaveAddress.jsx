@@ -7,12 +7,20 @@ import { LocationContext } from "../../../context/LocationContext";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Host } from "react-native-portalize";
 import Form from "./features/form/Form";
-import firestore from "@react-native-firebase/firestore";
+import {
+  getFirestore,
+  doc,
+  getDoc,
+  updateDoc,
+  collection,
+  addDoc,
+} from "@react-native-firebase/firestore";
 import * as geofire from "geofire-common";
 import { UserContext } from "../../../context/UserContext";
 
 const SaveAddress = ({ navigation, route }) => {
   const { user } = useContext(UserContext);
+  const db = getFirestore();
   const insets = useSafeAreaInsets();
   const { addressComponents } = route.params;
   const { setLocation } = useContext(LocationContext);
@@ -44,10 +52,10 @@ const SaveAddress = ({ navigation, route }) => {
     const geohash = data.geometry?.geohash;
     if (geohash && user?.uid) {
       try {
-        const workerRef = firestore().collection("workers").doc(user.uid);
-        const workerSnapshot = await workerRef.get();
+        const workerRef = doc(db, "workers", user.uid);
+        const workerSnapshot = await getDoc(workerRef);
         if (workerSnapshot.exists) {
-          await workerRef.update({
+          await updateDoc(workerRef, {
             geohash: geohash,
           });
           console.log("Geohash actualizado permanentemente en el worker:", geohash);
@@ -66,21 +74,21 @@ const SaveAddress = ({ navigation, route }) => {
       };
 
       try {
-        const workerRef = firestore().collection("workers").doc(user.uid);
+        const workerRef = doc(db, "workers", user.uid);
         saveLocationContext(newAddressData);
-        const workerSnapshot = await workerRef.get();
+        const workerSnapshot = await getDoc(workerRef);
         if (!workerSnapshot.exists) {
           console.log("El worker no existe en Firestore.");
           return;
         }
 
         // Guardar la dirección en la subcolección
-        await workerRef.collection("addresses").add(newAddressData);
+        await addDoc(collection(workerRef, "addresses"), newAddressData);
         
         // Actualizar el geohash del worker
         const geohash = addressComponents.geometry?.geohash;
         if (geohash) {
-          await workerRef.update({
+          await updateDoc(workerRef, {
             geohash: geohash,
           });
           console.log("Geohash actualizado en el worker:", geohash);
