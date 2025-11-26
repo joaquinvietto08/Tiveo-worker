@@ -6,6 +6,7 @@ import {
   StatusBar,
   Modal,
   ActivityIndicator,
+  Alert,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { styles } from "./JobApplyStyles";
@@ -42,9 +43,15 @@ const JobApply = ({ route, navigation }) => {
     offerAnotherTime
   );
 
-  console.log(job)
-
   const handleSubmit = async () => {
+    if (job.type !== "direct" && !postulationData) {
+      Alert.alert(
+        "Perfil no disponible",
+        "No pudimos cargar tus datos de trabajador. Reintenta en unos segundos."
+      );
+      return;
+    }
+
     try {
       const db = getFirestore(FIREBASE_APP);
       setIsSubmitting(true);

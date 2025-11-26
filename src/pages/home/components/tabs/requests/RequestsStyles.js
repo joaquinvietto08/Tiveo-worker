@@ -144,6 +144,12 @@ export const styles = StyleSheet.create({
     alignSelf: "stretch",
     textAlign: "center",
   },
+  requests__buttonAccept__disabled: {
+    backgroundColor: colors.lightGray,
+  },
+  requests__buttonAcceptText__disabled: {
+    color: colors.gray,
+  },
   // --- Modal ---
   requests__modalOverlay: {
     position: "absolute",

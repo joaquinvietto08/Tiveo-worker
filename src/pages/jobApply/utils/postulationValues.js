@@ -1,6 +1,18 @@
 import { useContext } from "react";
 import { UserContext } from "../../../context/UserContext";
 
+const buildWorkerPayload = (user) => {
+  if (!user) return null;
+
+  const fallbackName = `${user.name || ""} ${user.lastName || ""}`.trim();
+
+  return {
+    uid: user.uid,
+    workerName: user.workerName || fallbackName,
+    photoURL: user.photo || null,
+  };
+};
+
 export const buildPostulationValues = (
   job,
   user,
@@ -8,23 +20,36 @@ export const buildPostulationValues = (
   message,
   date,
   offerAnotherTime
-) => ({
-  requestId: job.id,
-  worker: {
-    uid: user.uid,
-    firstName: user.firstName,
-    lastName: user.lastName,
-    photoURL: user.photoURL,
-  },
-  status: "postulated",
-  budget,
-  message,
-  offerAnotherTime,
-  date: offerAnotherTime ? date : "",
-});
+) => {
+  const worker = buildWorkerPayload(user);
+  if (!worker?.uid) return null;
 
-export const usePostulationValues = (job, budget, message, date, offerAnotherTime) => {
-  const { user } = useContext(UserContext);
-  return buildPostulationValues(job, user, budget, message, date, offerAnotherTime);
+  return {
+    requestId: job.id,
+    worker,
+    status: "postulated",
+    budget,
+    message,
+    offerAnotherTime,
+    date: offerAnotherTime ? date : "",
+  };
 };
 
+export const usePostulationValues = (
+  job,
+  budget,
+  message,
+  date,
+  offerAnotherTime
+) => {
+  const { user } = useContext(UserContext);
+  if (!user?.uid) return null;
+  return buildPostulationValues(
+    job,
+    user,
+    budget,
+    message,
+    date,
+    offerAnotherTime
+  );
+};

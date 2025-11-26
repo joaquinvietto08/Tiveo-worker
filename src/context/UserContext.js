@@ -119,7 +119,7 @@ export function UserProvider({ children }) {
     // --- Escucha la colección "requests" excepto las cerradas
     const requestsQuery = query(
       collection(db, "requests"),
-      where("status", "not-in", ["closed", "rejected"]),
+      where("status", "not-in", ["closed", "rejected", "cancelled"]),
       orderBy("status")
     );
 

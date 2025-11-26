@@ -35,12 +35,13 @@ const Requests = () => {
   const [selectedImage, setSelectedImage] = useState(null);
   const { requests, postulations, user } = useContext(UserContext);
 
+  const getRelatedPostulations = (requestId) =>
+    postulations.filter((p) => p.requestId === requestId);
+
   const visibleRequests = requests.filter((req) => {
     if (req.type === "direct") return true;
     // Todas mis postulaciones vinculadas a esta request
-    const relatedPostulations = postulations.filter(
-      (p) => p.requestId === req.id
-    );
+    const relatedPostulations = getRelatedPostulations(req.id);
     // 🔹 No tengo ninguna postulación → mostrar
     if (relatedPostulations.length === 0) return true;
     // 🔹 Si alguna está rejected → ocultar
@@ -57,18 +58,30 @@ const Requests = () => {
       const db = getFirestore(FIREBASE_APP);
 
       if (item.type === "open") {
+        const existingPostulation = getRelatedPostulations(item.id).find(
+          (p) => p.status !== "rejected"
+        );
+
         // request abierta → se guarda una postulación con status "rejected"
-        await addDoc(collection(db, "postulations"), {
-          requestId: item.id,
-          worker: {
-            uid: user.uid,
-            firstName: user.firstName,
-            lastName: user.lastName,
-          },
-          status: "rejected",
-          createdAt: serverTimestamp(),
-        });
-        console.log("🟥 Postulación rechazada:", item.id);
+        if (existingPostulation) {
+          await updateDoc(
+            doc(db, "postulations", existingPostulation.id),
+            {
+              status: "rejected",
+            }
+          );
+        } else {
+          await addDoc(collection(db, "postulations"), {
+            requestId: item.id,
+            worker: {
+              uid: user.uid,
+              firstName: user.firstName,
+              lastName: user.lastName,
+            },
+            status: "rejected",
+            createdAt: serverTimestamp(),
+          });
+        }
       } else if (item.type === "direct") {
         // request directa → se actualiza su status a "rejected"
         const requestRef = doc(db, "requests", item.id);
@@ -126,6 +139,11 @@ const Requests = () => {
         : null;
 
     if (!buttonLabel) return null;
+
+    const relatedPostulations = getRelatedPostulations(item.id);
+    const hasNonRejectedPostulation = relatedPostulations.some(
+      (p) => p.status !== "rejected"
+    );
 
     return (
       <View key={item.id} style={styles.requests__card}>
@@ -200,12 +218,33 @@ const Requests = () => {
             <Text style={styles.requests__buttonRejectText}>Rechazar</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity
-            style={styles.requests__buttonAccept}
-            onPress={() => navigation.navigate("JobApply", { job: item })}
-          >
-            <Text style={styles.requests__buttonAcceptText}>{buttonLabel}</Text>
-          </TouchableOpacity>
+          {hasNonRejectedPostulation ? (
+            <View
+              style={[
+                styles.requests__buttonAccept,
+                styles.requests__buttonAccept__disabled,
+              ]}
+            >
+              <Text
+                style={[
+                  styles.requests__buttonAcceptText,
+                  styles.requests__buttonAcceptText__disabled,
+                ]}
+              >
+                Ya te postulaste
+              </Text>
+            </View>
+          ) : (
+            <TouchableOpacity
+              style={styles.requests__buttonAccept}
+              onPress={() => navigation.navigate("JobApply", { job: item })}
+              disabled={hasNonRejectedPostulation}
+            >
+              <Text style={styles.requests__buttonAcceptText}>
+                {buttonLabel}
+              </Text>
+            </TouchableOpacity>
+          )}
         </View>
       </View>
     );
