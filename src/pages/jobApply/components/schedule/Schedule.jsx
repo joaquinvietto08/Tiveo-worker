@@ -5,6 +5,7 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import { Ionicons } from "@expo/vector-icons";
 import { formatDate, formatTime } from "../../../../utils/formatHelpers";
 import { colors } from "../../../../styles/globalStyles";
+import Available from "../../../../../assets/svgs/worker/available.svg";
 
 const Schedule = ({ date, setDate, offerAnotherTime, setOfferAnotherTime }) => {
   const [showDatePicker, setShowDatePicker] = useState(false);
@@ -32,7 +33,7 @@ const Schedule = ({ date, setDate, offerAnotherTime, setOfferAnotherTime }) => {
     <>
       <View style={styles.jobApply__schedule__alertBox}>
         <View style={styles.jobApply__schedule__momentRow}>
-          <Ionicons name="walk-outline" size={20} color={colors.primary} />
+          <Available width={20} height={20} fill={colors.primary} />
           <Text style={styles.jobApply__schedule__alertTitle}>
             El cliente necesita el servicio ahora mismo
           </Text>

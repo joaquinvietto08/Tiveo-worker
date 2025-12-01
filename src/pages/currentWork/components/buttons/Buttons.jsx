@@ -4,7 +4,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { styles } from "./ButtonsStyles";
 import { UserContext } from "../../../../context/UserContext";
 import { colors } from "../../../../styles/globalStyles";
-import { getFirestore, doc, updateDoc } from "firebase/firestore";
+import { getFirestore, doc, updateDoc, serverTimestamp } from "firebase/firestore";
 import { FIREBASE_APP } from "../../../../config/firebaseConfig";
 import { useNavigation } from "@react-navigation/native";
 
@@ -34,12 +34,22 @@ const Buttons = ({ activity }) => {
     try {
       const db = getFirestore(FIREBASE_APP); // ✅ instancia de Firestore
       const activityRef = doc(db, "activities", activity.id);
-      await updateDoc(activityRef, { status: updatedStatus });
+      const updatePayload =
+        updatedStatus === "on-progress"
+          ? { status: updatedStatus, startedAt: serverTimestamp() }
+          : { status: updatedStatus };
+      await updateDoc(activityRef, updatePayload);
       console.log(`✅ Estado actualizado a: ${updatedStatus}`);
 
       // Actualizamos también el contexto local
       const updatedActivities = activities.map((a) =>
-        a.id === activity.id ? { ...a, status: updatedStatus } : a
+        a.id === activity.id
+          ? {
+              ...a,
+              status: updatedStatus,
+              ...(updatedStatus === "on-progress" && { startedAt: new Date() }),
+            }
+          : a
       );
       setActivities(updatedActivities);
     } catch (error) {
@@ -63,11 +73,21 @@ const Buttons = ({ activity }) => {
     try {
       const db = getFirestore(FIREBASE_APP); // ✅ misma instancia
       const activityRef = doc(db, "activities", activity.id);
-      await updateDoc(activityRef, { status: updatedStatus });
+      const updatePayload =
+        updatedStatus === "on-progress"
+          ? { status: updatedStatus, startedAt: serverTimestamp() }
+          : { status: updatedStatus };
+      await updateDoc(activityRef, updatePayload);
       console.log(`✅ Estado retrocedido a: ${updatedStatus}`);
 
       const updatedActivities = activities.map((a) =>
-        a.id === activity.id ? { ...a, status: updatedStatus } : a
+        a.id === activity.id
+          ? {
+              ...a,
+              status: updatedStatus,
+              ...(updatedStatus === "on-progress" && { startedAt: new Date() }),
+            }
+          : a
       );
       setActivities(updatedActivities);
     } catch (error) {

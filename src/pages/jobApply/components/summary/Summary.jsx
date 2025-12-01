@@ -1,8 +1,11 @@
 import { View, Text } from "react-native";
-import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 import { styles } from "./SummaryStyles";
+import { colors } from "../../../../styles/globalStyles";
 import { formatDate, formatTime, translateService } from "../../../../utils/formatHelpers";
 import { getIcon } from "../../../../utils/getIcons";
+import Available from "../../../../../assets/svgs/worker/available.svg";
+import Busy from "../../../../../assets/svgs/worker/busy.svg";
 
 const Summary = ({ job }) => {
   const hasDescription = job.description && job.description.trim() !== "";
@@ -13,7 +16,7 @@ const Summary = ({ job }) => {
     if (job.moment === "now") {
       return (
         <View style={styles.jobApply__summary__momentRow}>
-          <Ionicons name="walk-outline" size={18} color="#FFA500" />
+          <Available width={18} height={18} fill={colors.primary} />
           <Text style={styles.jobApply__summary__momentNow}>Ahora mismo</Text>
         </View>
       );
@@ -27,7 +30,7 @@ const Summary = ({ job }) => {
 
     return (
       <View style={styles.jobApply__summary__momentRow}>
-        <Ionicons name="time-outline" size={18} color="#000" />
+        <Busy width={18} height={18} fill={colors.black} />
         <Text style={styles.jobApply__summary__momentScheduled}>
           {dateText}
         </Text>
