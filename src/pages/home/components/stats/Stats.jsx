@@ -5,28 +5,44 @@ import { UserContext } from "../../../../context/UserContext";
 import { formatPrice } from "../../../../utils/formatHelpers";
 
 const Stats = ({}) => {
-  const { user, activities } = useContext(UserContext);
+  const { user, payments } = useContext(UserContext);
 
   // --- Calcular monto total del mes actual ---
   const currentMonthTotal = useMemo(() => {
-    if (!activities?.length) return 0;
+    if (!payments?.length) return 0;
 
     const now = new Date();
     const currentMonth = now.getMonth();
     const currentYear = now.getFullYear();
 
-    return activities
-      .filter((a) => {
-        if (!a.startedAt || a.paymentStatus === "pending") return false;
+    const getPaymentDate = (payment) => {
+      const status = String(payment.status || "").toLowerCase();
+      const rawDate =
+        status === "paid" || status === "released"
+          ? payment.updatedAt || payment.createdAt
+          : payment.createdAt || payment.updatedAt;
 
-        const startedDate = a.startedAt
+      if (!rawDate) return null;
+      if (rawDate instanceof Date) return rawDate;
+      if (typeof rawDate.toDate === "function") return rawDate.toDate();
+
+      const parsed = new Date(rawDate);
+      return Number.isNaN(parsed.getTime()) ? null : parsed;
+    };
+
+    return payments
+      .filter((payment) => {
+        const status = String(payment.status || "").toLowerCase();
+        if (status === "pending" || status === "cancelled") return false;
+        const paymentDate = getPaymentDate(payment);
+        if (!paymentDate) return false;
         return (
-          startedDate.getMonth() === currentMonth &&
-          startedDate.getFullYear() === currentYear
+          paymentDate.getMonth() === currentMonth &&
+          paymentDate.getFullYear() === currentYear
         );
       })
-      .reduce((acc, curr) => acc + (curr.amount || 0), 0);
-  }, [activities]);
+      .reduce((acc, curr) => acc + (Number(curr.totalAmount) || 0), 0);
+  }, [payments]);
 
   return (
     <View style={styles.home__stats__container}>

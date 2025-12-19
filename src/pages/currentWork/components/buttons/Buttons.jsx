@@ -140,7 +140,7 @@ const Buttons = ({ activity }) => {
   };
 
   const actionData = getActionButtonData();
-  const lockedByPayment = activity?.paymentStatus === "pending-to-pay";
+  const lockedByPayment = activity?.paymentStatus === "created";
   const canGoBack =
     activity.status !== "confirm" && activity.status !== "starting" && !lockedByPayment;
 

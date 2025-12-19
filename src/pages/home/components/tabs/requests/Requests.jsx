@@ -34,6 +34,29 @@ const Requests = () => {
   const navigation = useNavigation();
   const [selectedImage, setSelectedImage] = useState(null);
   const { requests, postulations, user } = useContext(UserContext);
+  const rejectStatuses = ["rejected", "cancelled"];
+
+  const getWorkerName = () => {
+    const fallbackName = `${user.firstName || user.name || ""} ${
+      user.lastName || ""
+    }`.trim();
+    return user.workerName || fallbackName || "Sin nombre";
+  };
+
+  const buildCancelledPostulation = (requestId) => ({
+    requestId,
+    worker: {
+      uid: user.uid,
+      workerName: getWorkerName(),
+      photoURL: user.photo || user.photoURL || null,
+    },
+    status: "cancelled",
+    budget: "",
+    message: "",
+    offerAnotherTime: false,
+    date: "",
+    createdAt: serverTimestamp(),
+  });
 
   const getRelatedPostulations = (requestId) =>
     postulations.filter((p) => p.requestId === requestId);
@@ -45,8 +68,8 @@ const Requests = () => {
     // 🔹 No tengo ninguna postulación → mostrar
     if (relatedPostulations.length === 0) return true;
     // 🔹 Si alguna está rejected → ocultar
-    const hasRejected = relatedPostulations.some(
-      (p) => p.status === "rejected"
+    const hasRejected = relatedPostulations.some((p) =>
+      rejectStatuses.includes(p.status)
     );
     if (hasRejected) return false;
     // 🔹 En cualquier otro caso (por ejemplo pending o accepted) → mostrar
@@ -59,7 +82,7 @@ const Requests = () => {
 
       if (item.type === "open") {
         const existingPostulation = getRelatedPostulations(item.id).find(
-          (p) => p.status !== "rejected"
+          (p) => !rejectStatuses.includes(p.status)
         );
 
         // request abierta → se guarda una postulación con status "rejected"
@@ -67,20 +90,14 @@ const Requests = () => {
           await updateDoc(
             doc(db, "postulations", existingPostulation.id),
             {
-              status: "rejected",
+              status: "cancelled",
             }
           );
         } else {
-          await addDoc(collection(db, "postulations"), {
-            requestId: item.id,
-            worker: {
-              uid: user.uid,
-              firstName: user.firstName,
-              lastName: user.lastName,
-            },
-            status: "rejected",
-            createdAt: serverTimestamp(),
-          });
+          await addDoc(
+            collection(db, "postulations"),
+            buildCancelledPostulation(item.id)
+          );
         }
       } else if (item.type === "direct") {
         // request directa → se actualiza su status a "rejected"
@@ -89,7 +106,9 @@ const Requests = () => {
           status: "rejected",
         });
       }
-    } catch (error) {}
+    } catch (error) {
+      console.error("Error al rechazar request:", error);
+    }
   };
 
   const renderDateAndMoment = (moment, scheduledDateTime) => {
@@ -142,7 +161,7 @@ const Requests = () => {
 
     const relatedPostulations = getRelatedPostulations(item.id);
     const hasNonRejectedPostulation = relatedPostulations.some(
-      (p) => p.status !== "rejected"
+      (p) => !rejectStatuses.includes(p.status)
     );
 
     return (

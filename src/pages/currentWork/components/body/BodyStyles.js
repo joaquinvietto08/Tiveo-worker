@@ -46,6 +46,9 @@ export const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+  currentWork__body__callButtonDisabled: {
+    backgroundColor: colors.lightGray,
+  },
   currentWork__body__section: {
     marginTop: 10,
   },

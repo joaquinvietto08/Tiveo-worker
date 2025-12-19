@@ -1,4 +1,4 @@
-import React, { useContext, useMemo, useState, useEffect } from "react";
+import React, { useContext, useMemo, useState, useEffect, useRef } from "react";
 import {
   View,
   Text,
@@ -7,6 +7,7 @@ import {
   ScrollView,
   StatusBar,
   ActivityIndicator,
+  Modal,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { colors } from "../../styles/globalStyles";
@@ -31,13 +32,19 @@ import { UserContext } from "../../context/UserContext";
 const Payment = ({ route }) => {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation();
-  const { user, setActivities } = useContext(UserContext);
+  const { user, setActivities, payments } = useContext(UserContext);
   const activity = route?.params?.activity || {};
   const categories = activity?.services || [];
+  const hasCategories = categories.length > 0;
   const clientName = activity?.client?.displayName || "Cliente";
   const clientId = activity?.client?.clientId || null;
   const workerId = user?.uid || null;
   const activityId = activity?.id;
+
+  const paymentFromContext = useMemo(
+    () => payments?.find((p) => p.activityId === activityId),
+    [payments, activityId]
+  );
 
   const db = useMemo(() => getFirestore(FIREBASE_APP), []);
 
@@ -50,6 +57,9 @@ const Payment = ({ route }) => {
   const [submitting, setSubmitting] = useState(false);
   const [paymentId, setPaymentId] = useState(null);
   const [currentStatus, setCurrentStatus] = useState(null); // pending | paid | failed
+  const [paymentMethod, setPaymentMethod] = useState(null);
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const modalShownRef = useRef(false);
 
   // If a payment already exists for this activity, load it once
   useEffect(() => {
@@ -63,6 +73,13 @@ const Payment = ({ route }) => {
           setPaymentId(docSnap.id);
           const data = docSnap.data();
           setCurrentStatus(data?.status || null);
+          setPaymentMethod(
+            data?.method ||
+              data?.methodLabel ||
+              data?.type ||
+              data?.paymentMethod ||
+              null
+          );
           // Hydrate UI
           if (Array.isArray(data?.services) && data.services.length) {
             // Map amounts back by category
@@ -83,6 +100,41 @@ const Payment = ({ route }) => {
     loadExisting();
   }, [activityId, db, categories]);
 
+  useEffect(() => {
+    // hydrate desde la activity recibida (por si ya viene con info)
+    if (activity?.paymentStatus && !currentStatus) {
+      setCurrentStatus(activity.paymentStatus);
+    }
+    if (!paymentMethod) {
+      const methodFromActivity =
+        activity?.paymentMethod ||
+        activity?.payment?.method ||
+        activity?.payment?.methodLabel ||
+        activity?.payment?.type ||
+        null;
+      if (methodFromActivity) setPaymentMethod(methodFromActivity);
+    }
+  }, [activity, currentStatus, paymentMethod]);
+
+  useEffect(() => {
+    if (!paymentFromContext) return;
+    if (!paymentId && paymentFromContext.id) {
+      setPaymentId(paymentFromContext.id);
+    }
+    if (!currentStatus && paymentFromContext.status) {
+      setCurrentStatus(paymentFromContext.status);
+    }
+    if (!paymentMethod) {
+      const methodFromPayment =
+        paymentFromContext.method ||
+        paymentFromContext.methodLabel ||
+        paymentFromContext.type ||
+        paymentFromContext.paymentMethod ||
+        null;
+      if (methodFromPayment) setPaymentMethod(methodFromPayment);
+    }
+  }, [paymentFromContext, paymentId, currentStatus, paymentMethod]);
+
   const parsedPerService = perServiceAmounts.map((v) => Number(String(v).replace(/\D/g, "")) || 0);
   const perServiceTotal = parsedPerService.reduce((acc, n) => acc + (Number.isFinite(n) ? n : 0), 0);
   const totalValue = mode === "perService" ? perServiceTotal : Number(String(totalAmountInput).replace(/\D/g, "")) || 0;
@@ -93,6 +145,25 @@ const Payment = ({ route }) => {
     if (mode === "total") return totalValue > 0;
     return parsedPerService.some((n) => n > 0);
   }, [activityId, clientId, workerId, mode, totalValue, parsedPerService, paymentId]);
+
+  const isPaidFromState = currentStatus === "paid" || currentStatus === "released";
+  const isPaidFromActivity =
+    activity?.paymentStatus === "paid" || activity?.paymentStatus === "released";
+  const isPaid = isPaidFromState || isPaidFromActivity;
+  const normalizedMethod = String(paymentMethod || "").trim().toLowerCase();
+  const isCash =
+    normalizedMethod === "efectivo" ||
+    normalizedMethod === "cash" ||
+    normalizedMethod === "efectivo (cash)";
+  const showCashFlow = isCash;
+
+  useEffect(() => {
+    if (modalShownRef.current) return;
+    if (isPaid || isCash) {
+      setShowPaymentModal(true);
+      modalShownRef.current = true;
+    }
+  }, [isPaid, isCash]);
 
   const handleSubmit = async () => {
     if (!canSubmit) return;
@@ -115,13 +186,13 @@ const Payment = ({ route }) => {
       // Flag en la actividad para bloquear volver atrás
       if (activityId) {
         const actRef = doc(db, "activities", activityId);
-        await updateDoc(actRef, { paymentStatus: "pending-to-pay" });
+        await updateDoc(actRef, { paymentStatus: "created" });
         // Update local cache inmediatamente
         if (typeof setActivities === "function") {
           setActivities((prev) =>
             Array.isArray(prev)
               ? prev.map((a) =>
-                  a.id === activityId ? { ...a, paymentStatus: "pending-to-pay" } : a
+                  a.id === activityId ? { ...a, paymentStatus: "created" } : a
                 )
               : prev
           );
@@ -179,7 +250,8 @@ const Payment = ({ route }) => {
           </TouchableOpacity>
           <TouchableOpacity
             style={[styles.payment__toggleBtn, mode === "perService" && styles.payment__toggleBtnActive]}
-            activeOpacity={0.9}
+            activeOpacity={hasCategories ? 0.9 : 1}
+            disabled={!hasCategories}
             onPress={() => setMode("perService")}
           >
             <Text style={[styles.payment__toggleText, mode === "perService" && styles.payment__toggleTextActive]}>Por servicio</Text>
@@ -254,6 +326,33 @@ const Payment = ({ route }) => {
           </TouchableOpacity>
         )}
       </ScrollView>
+
+      <Modal transparent visible={showPaymentModal} animationType="fade">
+        <View style={styles.payment__modalOverlay}>
+          <View style={styles.payment__modalCard}>
+            <Text style={styles.payment__modalTitle}>
+              {showCashFlow ? "Pago en efectivo" : "Pago recibido"}
+            </Text>
+            <Text style={styles.payment__modalMessage}>
+              {showCashFlow
+                ? `${clientName} eligió pagar en efectivo. Cobrá y confirmá el pago.`
+                : `${clientName} ya realizó el pago.`}
+            </Text>
+            <TouchableOpacity
+              style={styles.payment__modalButton}
+              activeOpacity={0.9}
+              onPress={() => {
+                setShowPaymentModal(false);
+                navigation.navigate("Home");
+              }}
+            >
+              <Text style={styles.payment__modalButtonText}>
+                {showCashFlow ? "Confirmar" : "Entendido"}
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 };

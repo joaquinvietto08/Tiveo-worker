@@ -21,6 +21,7 @@ export function UserProvider({ children }) {
   const [activities, setActivities] = useState([]);
   const [requests, setRequests] = useState([]);
   const [postulations, setPostulations] = useState([]);
+  const [payments, setPayments] = useState([]);
   const [loading, setLoading] = useState(true);
 
   // Ref para rastrear cuando cada query se completa por primera vez
@@ -28,6 +29,7 @@ export function UserProvider({ children }) {
     activity: false,
     requests: false,
     postulations: false,
+    payments: false,
   });
 
   const db = getFirestore(getApp());
@@ -67,6 +69,7 @@ export function UserProvider({ children }) {
       setActivities([]);
       setRequests([]);
       setPostulations([]);
+      setPayments([]);
       // Importante: no tocar `loading` aquí.
       // El estado de `loading` para "no hay usuario" lo maneja la suscripción de Auth.
       // De esta forma evitamos el parpadeo de AuthRoutes antes de que Firebase resuelva la sesión.
@@ -75,6 +78,7 @@ export function UserProvider({ children }) {
         activity: false,
         requests: false,
         postulations: false,
+        payments: false,
       };
       return;
     }
@@ -84,12 +88,13 @@ export function UserProvider({ children }) {
       activity: false,
       requests: false,
       postulations: false,
+      payments: false,
     };
     setLoading(true);
 
     const checkAllLoaded = () => {
       const flags = loadedFlags.current;
-      if (flags.activity && flags.requests && flags.postulations) {
+      if (flags.activity && flags.requests && flags.postulations && flags.payments) {
         setLoading(false);
       }
     };
@@ -166,17 +171,41 @@ export function UserProvider({ children }) {
       }
     );
 
+    // --- Escucha los pagos del trabajador actual
+    const paymentsQuery = query(
+      collection(db, "payments"),
+      where("workerId", "==", user.uid)
+    );
+
+    const unsubscribePayments = onSnapshot(paymentsQuery, (snapshot) => {
+      const paymentsData = snapshot.docs.map((doc) => {
+        const data = doc.data();
+        return {
+          id: doc.id,
+          ...data,
+          createdAt: data?.createdAt?.toDate?.() || null,
+          updatedAt: data?.updatedAt?.toDate?.() || null,
+        };
+      });
+      setPayments(paymentsData);
+      if (!loadedFlags.current.payments) {
+        loadedFlags.current.payments = true;
+        checkAllLoaded();
+      }
+    });
+
     // Cleanup
     return () => {
       unsubscribeActivity();
       unsubscribeRequests();
       unsubscribePostulations();
+      unsubscribePayments();
     };
   }, [user?.uid]);
 
   return (
     <UserContext.Provider
-      value={{ user, activities, requests, postulations, setActivities, loading }}
+      value={{ user, activities, requests, postulations, payments, setActivities, loading }}
     >
       {children}
     </UserContext.Provider>

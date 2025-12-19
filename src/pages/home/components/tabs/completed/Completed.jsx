@@ -11,7 +11,7 @@ import {
 import { getIcon } from "../../../../../utils/getIcons";
 
 const Completed = ({ navigation }) => {
-  const { activities } = useContext(UserContext);
+  const { activities, payments } = useContext(UserContext);
 
   const completeActivities = activities.filter(
     (item) => item.status === "cancelled" || item.status === "done"
@@ -32,7 +32,18 @@ const Completed = ({ navigation }) => {
       {completeActivities.map((item) => {
         const services = item.services || [];
         const hasServices = services.length > 0;
-        const hasAmount = item.amount && item.amount > 0;
+        const payment = payments?.find((p) => p.activityId === item.id);
+        const paymentStatus = String(item.paymentStatus || payment?.status || "").toLowerCase();
+        const paymentTotal = Number(payment?.totalAmount ?? payment?.amount ?? 0);
+        const activityAmount = Number(item.amount || 0);
+        const displayAmount =
+          activityAmount > 0
+            ? activityAmount
+            : paymentTotal > 0
+            ? paymentTotal
+            : null;
+        const isPaid = paymentStatus === "paid" || paymentStatus === "released";
+        const hasAmount = displayAmount !== null || isPaid;
 
         return (
           <View key={item.id} style={styles.completed__card}>
@@ -65,10 +76,14 @@ const Completed = ({ navigation }) => {
             <View style={styles.completed__bottomRow}>
               {hasAmount ? (
                 <Text style={styles.completed__price}>
-                  {formatPrice(item.amount)}
+                  {formatPrice(displayAmount ?? 0)}
                 </Text>
               ) : (
-                <TouchableOpacity style={styles.completed__chargeButton}>
+                <TouchableOpacity
+                  style={styles.completed__chargeButton}
+                  activeOpacity={0.85}
+                  onPress={() => navigation?.navigate("Payment", { activity: item })}
+                >
                   <Text style={styles.completed__chargeButtonText}>
                     Cobrar trabajo
                   </Text>

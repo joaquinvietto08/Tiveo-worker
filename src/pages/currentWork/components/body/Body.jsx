@@ -6,6 +6,7 @@ import {
   ScrollView,
   Image,
   Modal,
+  Linking,
 } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import { styles } from "./BodyStyles";
@@ -30,6 +31,8 @@ const Body = ({ activity }) => {
   } = activity;
 
   const hasImages = Array.isArray(images) && images.length > 0;
+  const phoneNumber = (address?.phone || "").trim();
+  const hasPhone = Boolean(phoneNumber);
 
   const handleOpenMap = () => {
     console.log(activity)
@@ -60,9 +63,16 @@ const Body = ({ activity }) => {
         </View>
 
         <TouchableOpacity
-          style={styles.currentWork__body__callButton}
-          activeOpacity={0.8}
-          onPress={() => {}}
+          style={[
+            styles.currentWork__body__callButton,
+            !hasPhone && styles.currentWork__body__callButtonDisabled,
+          ]}
+          activeOpacity={hasPhone ? 0.8 : 1}
+          disabled={!hasPhone}
+          onPress={() => {
+            if (!hasPhone) return;
+            Linking.openURL(`tel:${phoneNumber}`);
+          }}
         >
           <MaterialIcons name="call" size={22} color="#fff" />
         </TouchableOpacity>

@@ -1,11 +1,13 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useContext } from "react";
 import { View, Text } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import { styles } from "../ActivityDetailStyles";
 import { formatPrice } from "../../../utils/formatHelpers";
 import { colors } from "../../../styles/globalStyles";
+import { UserContext } from "../../../context/UserContext";
 
 const statusLabelMap = {
+  created: "Pago creado",
   pending: "Pendiente de cobro",
   paid: "Pagado",
   released: "Pagado",
@@ -13,6 +15,7 @@ const statusLabelMap = {
 };
 
 const statusBackgroundMap = {
+  created: "#FFF1CC",
   pending: "#FFF1CC",
   paid: "#D7F5DD",
   released: "#D7F5DD",
@@ -20,18 +23,34 @@ const statusBackgroundMap = {
 };
 
 const PaymentSection = ({ activity }) => {
+  const { payments } = useContext(UserContext);
+  const payment = useMemo(
+    () => payments?.find((p) => p.activityId === activity?.id),
+    [payments, activity?.id]
+  );
   const amountLabel = useMemo(() => {
-    if (typeof activity?.amount === "number") {
-      return formatPrice(activity.amount);
+    const activityAmount =
+      typeof activity?.amount === "number"
+        ? activity.amount
+        : activity?.amount && !Number.isNaN(Number(activity.amount))
+        ? Number(activity.amount)
+        : null;
+    if (typeof activityAmount === "number" && activityAmount > 0) {
+      return formatPrice(activityAmount);
     }
-    if (activity?.amount) {
-      const parsed = Number(activity.amount);
-      return Number.isNaN(parsed) ? activity.amount : formatPrice(parsed);
+
+    const paymentAmount = Number(payment?.totalAmount ?? payment?.amount);
+    if (Number.isFinite(paymentAmount) && paymentAmount > 0) {
+      return formatPrice(paymentAmount);
+    }
+
+    if (activity?.amount && Number.isNaN(Number(activity.amount))) {
+      return activity.amount;
     }
     return "No registrado";
-  }, [activity]);
+  }, [activity, payment]);
 
-  const paymentStatus = activity?.paymentStatus;
+  const paymentStatus = activity?.paymentStatus || payment?.status;
   const normalizedStatus = paymentStatus?.toLowerCase?.() || "";
   const hasPayment =
     normalizedStatus && normalizedStatus !== "pending";
