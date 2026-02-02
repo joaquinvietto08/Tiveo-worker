@@ -39,6 +39,8 @@ const ActivityDetail = ({ route, navigation }) => {
   }, [activities, activityId, routeActivity]);
 
   const status = activity?.status;
+  const paymentStatus = activity?.paymentStatus;
+  const messagesDisabled = paymentStatus === "paid" || paymentStatus === "released";
   const cancelDisabled =
     !activity || status === "cancelled" || status === "done";
   const cancelLabel = cancelDisabled
@@ -106,6 +108,7 @@ const ActivityDetail = ({ route, navigation }) => {
             onPressMessages={() =>
               navigation.navigate("Messages", { activity })
             }
+            messagesDisabled={messagesDisabled}
             onPressCancel={() => setShowCancelModal(true)}
             cancelDisabled={cancelDisabled}
             cancelLabel={cancelLabel}

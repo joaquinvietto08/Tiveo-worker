@@ -111,6 +111,7 @@ export function UserProvider({ children }) {
             createdAt: data?.createdAt?.toDate?.() || null,
             scheduledDateTime: data?.scheduledDateTime?.toDate?.() || null,
             startedAt: data?.startedAt?.toDate?.() || null,
+            updatedAt: data?.updatedAt?.toDate?.() || null,
           };
         });
         setActivities(activitiesData);

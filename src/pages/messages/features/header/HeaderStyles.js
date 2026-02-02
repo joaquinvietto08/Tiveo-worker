@@ -30,6 +30,5 @@ export const styles = StyleSheet.create({
     fontFamily: "Inter-SemiBold",
     fontSize: 18,
     color: colors.black,
-    width: "70%",
   },
 });

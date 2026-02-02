@@ -6,6 +6,7 @@ import { colors } from "../../../styles/globalStyles";
 
 const ActionButtons = ({
   onPressMessages,
+  messagesDisabled,
   onPressCancel,
   cancelDisabled,
   cancelLabel,
@@ -14,12 +15,25 @@ const ActionButtons = ({
   return (
     <View style={styles.activityDetail__actionsCard}>
       <TouchableOpacity
-        style={styles.activityDetail__messageButton}
-        activeOpacity={0.85}
-        onPress={onPressMessages}
+        style={[
+          styles.activityDetail__messageButton,
+          messagesDisabled && styles.activityDetail__messageButtonDisabled,
+        ]}
+        activeOpacity={messagesDisabled ? 1 : 0.85}
+        onPress={messagesDisabled ? undefined : onPressMessages}
+        disabled={messagesDisabled}
       >
-        <MaterialIcons name="chat-bubble-outline" size={20} color={colors.white} />
-        <Text style={styles.activityDetail__messageButtonText}>
+        <MaterialIcons
+          name="chat-bubble-outline"
+          size={20}
+          color={messagesDisabled ? colors.gray : colors.white}
+        />
+        <Text
+          style={[
+            styles.activityDetail__messageButtonText,
+            messagesDisabled && styles.activityDetail__messageButtonTextDisabled,
+          ]}
+        >
           Mensajes
         </Text>
       </TouchableOpacity>

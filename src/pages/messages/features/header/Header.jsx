@@ -18,8 +18,7 @@ const Header = ({client}) => {
         <Feather name="arrow-left" size={24} color={colors.black}/>
       </Pressable>
       <View style={styles.messages__header__clientContainer}>
-        <MaterialCommunityIcons name="account-circle" size={40} color={colors.gray} />
-        <Text style={styles.messages__header__nameText} numberOfLines={2}>
+        <Text style={styles.messages__header__nameText} numberOfLines={1}>
           {client?.displayName ?? "Cliente" }
         </Text>
       </View>

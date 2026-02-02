@@ -28,7 +28,7 @@ const CurrentWorkCard = ({ onPress }) => {
     const liveActivity = validActivities.find(
       (a) =>
         ["going", "on-progress", "done"].includes(a.status) &&
-        a.paymentStatus === "pending"
+        a.paymentStatus === "created"
     );
 
     // 2️⃣ Buscar todas las "starting"

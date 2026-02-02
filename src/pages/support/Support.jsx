@@ -38,7 +38,7 @@ const Support = () => {
       await addDoc(collection(db, "support"), {
         message: message.trim(),
         uid: user?.uid,
-        user: "client",
+        user: "worker",
         createdAt: serverTimestamp(),
         activityId: route.params?.activityId ?? "",
       });

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import {
   View,
   Text,
@@ -15,20 +15,20 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 import Summary from "./components/summary/Summary";
 import Body from "./components/body/Body";
 import Schedule from "./components/schedule/Schedule";
-import { usePostulationValues } from "./utils/postulationValues";
+import { usePostulationValues, buildWorkerPayload } from "./utils/postulationValues";
+import { UserContext } from "../../context/UserContext";
 import { FIREBASE_APP } from "../../config/firebaseConfig";
 import {
   getFirestore,
   collection,
   addDoc,
-  doc,
-  updateDoc,
   serverTimestamp,
 } from "firebase/firestore";
 
 const JobApply = ({ route, navigation }) => {
   const insets = useSafeAreaInsets();
   const { job } = route.params;
+  const { user } = useContext(UserContext);
   const [budget, setBudget] = useState("");
   const [message, setMessage] = useState("");
   const [date, setDate] = useState(new Date());
@@ -58,6 +58,12 @@ const JobApply = ({ route, navigation }) => {
 
       if (job.type === "direct") {
         // 🔹 Trabajo directo: crear activity a partir de la request mediante endpoint
+        // Enviamos los datos del worker porque el backend los necesita cuando no hay postulación
+        const workerData = buildWorkerPayload(user);
+        if (!workerData) {
+          throw new Error("No se pudieron obtener los datos del trabajador");
+        }
+
         const response = await fetch(
           "https://createactivityfromrequest-fpeb5gaoea-uc.a.run.app",
           {
@@ -66,6 +72,7 @@ const JobApply = ({ route, navigation }) => {
             body: JSON.stringify({
               requestId: job.id,
               newStatus: "confirm",
+              worker: workerData, // Enviamos el worker para que el backend lo use cuando no hay postulación
             }),
           }
         );

@@ -26,6 +26,7 @@ const Login = () => {
         await setDoc(clientRef, {
           displayName: user.displayName,
           photoURL: user.photoURL,
+          email: user.email,
         });
         console.log("Trabajador creado en Firestore.");
       } else {

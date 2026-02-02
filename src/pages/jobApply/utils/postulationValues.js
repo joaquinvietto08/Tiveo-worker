@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import { UserContext } from "../../../context/UserContext";
 
-const buildWorkerPayload = (user) => {
+export const buildWorkerPayload = (user) => {
   if (!user) return null;
 
   const fallbackName = `${user.name || ""} ${user.lastName || ""}`.trim();
@@ -9,6 +9,8 @@ const buildWorkerPayload = (user) => {
   return {
     uid: user.uid,
     workerName: user.workerName || fallbackName,
+    firstName: user.name || user.firstName || "",
+    lastName: user.lastName || "",
     photoURL: user.photo || null,
   };
 };

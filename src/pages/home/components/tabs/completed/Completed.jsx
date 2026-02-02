@@ -13,9 +13,14 @@ import { getIcon } from "../../../../../utils/getIcons";
 const Completed = ({ navigation }) => {
   const { activities, payments } = useContext(UserContext);
 
-  const completeActivities = activities.filter(
-    (item) => item.status === "cancelled" || item.status === "done"
-  );
+  const completeActivities = activities
+    .filter((item) => item.status === "cancelled" || item.status === "done")
+    .sort((a, b) => {
+      // Usar updatedAt si está disponible, sino usar startedAt, sino createdAt
+      const dateA = a.updatedAt || a.startedAt || a.createdAt || new Date(0);
+      const dateB = b.updatedAt || b.startedAt || b.createdAt || new Date(0);
+      return dateB - dateA; // Más nueva primero
+    });
 
   if (!completeActivities.length) {
     return (

@@ -214,10 +214,16 @@ export const styles = StyleSheet.create({
     gap: 8,
     backgroundColor: colors.primary,
   },
+  activityDetail__messageButtonDisabled: {
+    backgroundColor: colors.lightGray,
+  },
   activityDetail__messageButtonText: {
     fontSize: 16,
     fontFamily: "Inter-Bold",
     color: colors.white,
+  },
+  activityDetail__messageButtonTextDisabled: {
+    color: colors.gray,
   },
   activityDetail__cancelButton: {
     flexDirection: "row",

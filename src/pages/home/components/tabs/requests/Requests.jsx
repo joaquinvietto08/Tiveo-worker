@@ -48,6 +48,8 @@ const Requests = () => {
     worker: {
       uid: user.uid,
       workerName: getWorkerName(),
+      firstName: user.firstName,
+      lastName: user.lastName,
       photoURL: user.photo || user.photoURL || null,
     },
     status: "cancelled",
@@ -268,6 +270,16 @@ const Requests = () => {
       </View>
     );
   };
+
+  if (!visibleRequests.length) {
+    return (
+      <View style={styles.requests__emptyContainer}>
+        <Text style={styles.requests__emptyText}>
+          Aquí aparecerán las solicitudes
+        </Text>
+      </View>
+    );
+  }
 
   return (
     <ScrollView

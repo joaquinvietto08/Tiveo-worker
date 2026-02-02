@@ -33,30 +33,6 @@ const AddressSection = ({ address }) => {
           />
           <View style={styles.activityDetail__rowTextContainer}>
             <Text style={styles.activityDetail__rowText}>{address.address}</Text>
-            {address?.floor ? (
-              <Text style={styles.activityDetail__rowSubText}>
-                Piso / Unidad: {address.floor}
-              </Text>
-            ) : null}
-          </View>
-        </View>
-      ) : null}
-
-      {address?.instructions ? (
-        <View style={styles.activityDetail__row}>
-          <MaterialIcons
-            name="info-outline"
-            size={20}
-            color={colors.primary}
-            style={{ marginTop: 2 }}
-          />
-          <View style={styles.activityDetail__rowTextContainer}>
-            <Text style={styles.activityDetail__rowText}>
-              {address.instructions}
-            </Text>
-            <Text style={styles.activityDetail__rowSubText}>
-              Instrucciones
-            </Text>
           </View>
         </View>
       ) : null}

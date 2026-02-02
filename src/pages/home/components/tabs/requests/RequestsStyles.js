@@ -10,6 +10,17 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingBottom: 32,
   },
+  requests__emptyContainer: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 80,
+  },
+  requests__emptyText: {
+    fontSize: 15,
+    color: colors.gray,
+    fontFamily: "Inter-Italic",
+  },
   requests__card: {
     backgroundColor: colors.white,
     borderRadius: 16,
