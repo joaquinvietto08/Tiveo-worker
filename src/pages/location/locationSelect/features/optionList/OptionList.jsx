@@ -129,11 +129,29 @@ const OptionList = ({ navigation, setShowLoading }) => {
     fetchAddresses();
   }, []);
 
-  const handleSelectLocation = (item) => {
+  const handleSelectLocation = async (item) => {
     const { key, ...locationData } = item;
     setLocation(locationData);
     // Selección manual/mapa: desactivar seguimiento de ubicación actual
     setTrackingCurrent(false);
+    
+    // Actualizar el geohash, lat y lng del worker en Firestore
+    const geohash = locationData.geometry?.geohash;
+    const latitude = locationData.geometry?.location?.lat;
+    const longitude = locationData.geometry?.location?.lng;
+    
+    if (geohash && user?.uid) {
+      try {
+        const updateData = { geohash, updatedAt: serverTimestamp() };
+        if (latitude !== undefined) updateData.lat = latitude;
+        if (longitude !== undefined) updateData.lng = longitude;
+        
+        await updateDoc(doc(db, "workers", user.uid), updateData);
+        console.log("Ubicación actualizada en el worker al seleccionar ubicación guardada:", { geohash, lat: latitude, lng: longitude });
+      } catch (error) {
+        console.error("Error al actualizar la ubicación del worker:", error);
+      }
+    }
   };
 
   const handleUseCurrentLocation = async () => {

@@ -63,7 +63,7 @@ const Info = ({ workerData, setWorkerData, onNext, mode = "create" }) => {
         />
 
         {/* Nombre de trabajador */}
-        <Text style={styles.info__label}>Nombre de trabajador</Text>
+        <Text style={styles.info__label}>Emprendimiento</Text>
         <TextInput
           placeholder="Ej: Soluciones Córdoba"
           value={workerData.workerName}
@@ -73,7 +73,7 @@ const Info = ({ workerData, setWorkerData, onNext, mode = "create" }) => {
           style={styles.info__input}
           placeholderTextColor={styles.placeholder.color}
         />
-        <Text style={styles.info__helperText}>Este será tu nombre público</Text>
+        <Text style={styles.info__helperText}>Aparecerá junto a tu nombre real en tu perfil público.</Text>
 
         {/* Fecha de nacimiento */}
         <Text style={styles.info__label}>Fecha de nacimiento</Text>

@@ -48,20 +48,25 @@ const SaveAddress = ({ navigation, route }) => {
   const saveLocationContext = async (data) => {
     setLocation(data);
     
-    // Si se usa "ubicación actual" sin guardar dirección, también actualizar el geohash del worker
+    // Actualizar el geohash, lat y lng del worker en Firestore
     const geohash = data.geometry?.geohash;
+    const latitude = data.geometry?.location?.lat;
+    const longitude = data.geometry?.location?.lng;
+    
     if (geohash && user?.uid) {
       try {
         const workerRef = doc(db, "workers", user.uid);
         const workerSnapshot = await getDoc(workerRef);
         if (workerSnapshot.exists) {
-          await updateDoc(workerRef, {
-            geohash: geohash,
-          });
-          console.log("Geohash actualizado permanentemente en el worker:", geohash);
+          const updateData = { geohash };
+          if (latitude !== undefined) updateData.lat = latitude;
+          if (longitude !== undefined) updateData.lng = longitude;
+          
+          await updateDoc(workerRef, updateData);
+          console.log("Ubicación actualizada en el worker:", { geohash, lat: latitude, lng: longitude });
         }
       } catch (error) {
-        console.error("Error al actualizar el geohash del worker:", error);
+        console.error("Error al actualizar la ubicación del worker:", error);
       }
     }
   };
@@ -85,13 +90,18 @@ const SaveAddress = ({ navigation, route }) => {
         // Guardar la dirección en la subcolección
         await addDoc(collection(workerRef, "addresses"), newAddressData);
         
-        // Actualizar el geohash del worker
+        // Actualizar el geohash, lat y lng del worker
         const geohash = addressComponents.geometry?.geohash;
+        const latitude = addressComponents.geometry?.location?.lat;
+        const longitude = addressComponents.geometry?.location?.lng;
+        
         if (geohash) {
-          await updateDoc(workerRef, {
-            geohash: geohash,
-          });
-          console.log("Geohash actualizado en el worker:", geohash);
+          const updateData = { geohash };
+          if (latitude !== undefined) updateData.lat = latitude;
+          if (longitude !== undefined) updateData.lng = longitude;
+          
+          await updateDoc(workerRef, updateData);
+          console.log("Ubicación actualizada en el worker al guardar dirección:", { geohash, lat: latitude, lng: longitude });
         }
 
         console.log(
