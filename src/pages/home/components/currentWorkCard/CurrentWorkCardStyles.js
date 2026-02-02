@@ -65,4 +65,89 @@ export const styles = StyleSheet.create({
   home__currentWork__arrow: {
     marginLeft: 10,
   },
+  // --- Estilos para garantía ---
+  home__currentWork__container__warranty: {
+    backgroundColor: "#FF6B35", // Color naranja para garantía
+  },
+  home__currentWork__statusDot__warranty: {
+    backgroundColor: "#FFE5DC",
+  },
+  home__currentWork__solveButton: {
+    marginTop: 10,
+    backgroundColor: "#fff",
+    borderRadius: 8,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    alignSelf: "flex-start",
+  },
+  home__currentWork__solveButtonText: {
+    color: "#FF6B35",
+    fontFamily: "Inter-Bold",
+    fontSize: 14,
+  },
+  // --- Estilos para modal de confirmación ---
+  home__currentWork__modalOverlay: {
+    position: "absolute",
+    top: 0,
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: "rgba(0,0,0,0.6)",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 20,
+  },
+  home__currentWork__modalCard: {
+    backgroundColor: colors.white,
+    borderRadius: 16,
+    padding: 20,
+    width: "100%",
+    maxWidth: 360,
+    elevation: 6,
+    gap: 12,
+  },
+  home__currentWork__modalTitle: {
+    fontFamily: "Inter-Bold",
+    fontSize: 18,
+    color: colors.black,
+  },
+  home__currentWork__modalMessage: {
+    fontFamily: "Inter-Regular",
+    fontSize: 15,
+    color: colors.black,
+    lineHeight: 22,
+  },
+  home__currentWork__modalButtonsRow: {
+    flexDirection: "row",
+    gap: 12,
+    marginTop: 8,
+  },
+  home__currentWork__modalButtonCancel: {
+    flex: 1,
+    backgroundColor: colors.background,
+    borderRadius: 12,
+    paddingVertical: 12,
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: colors.lightGray,
+    justifyContent: "center",
+  },
+  home__currentWork__modalButtonCancelText: {
+    fontFamily: "Inter-SemiBold",
+    fontSize: 15,
+    color: colors.black,
+  },
+  home__currentWork__modalButtonConfirm: {
+    flex: 1,
+    backgroundColor: "#FF6B35",
+    borderRadius: 12,
+    paddingVertical: 12,
+    alignItems: "center",
+  },
+  home__currentWork__modalButtonConfirmText: {
+    fontFamily: "Inter-SemiBold",
+    fontSize: 15,
+    textAlign: "center",
+    color: colors.white,
+  },
 });

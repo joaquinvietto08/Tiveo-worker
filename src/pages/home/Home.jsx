@@ -50,6 +50,7 @@ const Home = ({ navigation }) => {
           onPress={(activityId) =>
             navigation.navigate("CurrentWork", { activityId })
           }
+          navigation={navigation}
         />
         <Tabs activeTab={activeTab} setActiveTab={setActiveTab} />
         {{

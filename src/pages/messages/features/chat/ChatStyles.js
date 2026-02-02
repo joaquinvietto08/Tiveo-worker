@@ -101,4 +101,23 @@ export const styles = StyleSheet.create({
     marginTop: 12,
     textAlign: "center",
   },
+  // --- Estilos para mensaje del sistema (garantía) ---
+  messages__chat__item__system: {
+    alignSelf: "center",
+    backgroundColor: "#F0F0F0",
+    borderWidth: 1,
+    borderColor: "#E0E0E0",
+    maxWidth: "90%",
+  },
+  messages__chat__text__system: {
+    color: colors.black,
+    fontFamily: "Inter-Regular",
+  },
+  messages__chat__time__system: {
+    marginTop: 4,
+    fontSize: 12,
+    fontFamily: "Inter-Regular",
+    textAlign: "right",
+    color: colors.black,
+  },
 });
