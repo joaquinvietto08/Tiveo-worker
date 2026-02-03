@@ -25,7 +25,7 @@ const Root = () => {
   const { location, trackingCurrent } = useContext(LocationContext);
 
   // Actualización periódica de ubicación cuando el trabajador eligió "Mi ubicación actual"
-  useWorkerLocationUpdates({ enabled: !!user && trackingCurrent, uid: user?.uid, intervalMs: 4000000 });
+  useWorkerLocationUpdates({ enabled: !!user && trackingCurrent, uid: user?.uid, intervalMs: 120000 });
 
   if (loading) return <Loading />;
 
@@ -55,7 +55,12 @@ const Root = () => {
                   <Stack.Screen name="CurrentWorkMap" component={CurrentWorkMap} />
                 </>
               ) : (
-                <Stack.Screen name="Location" component={LocationRoutes} />
+                <>
+                  <Stack.Screen name="Location" component={LocationRoutes} />
+                  <Stack.Screen name="Profile" component={Profile} />
+                  <Stack.Screen name="Support" component={Support} />
+                  <Stack.Screen name="ProfileEdit" component={Onboarding} />
+                </>
               )
             ) : (
               <Stack.Screen name="Onboarding" component={Onboarding} />

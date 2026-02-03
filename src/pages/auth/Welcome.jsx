@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet, StatusBar, Pressable } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-/* import Tiveo from "../../../assets/svgs/tiveo";*/
+import Tiveo from "../../../assets/svgs/tiveo";
 import { colors } from "../../styles/globalStyles";
 
 const Welcome = ({ navigation }) => {
@@ -22,7 +22,7 @@ const Welcome = ({ navigation }) => {
       <View style={styles.circle1} />
       <View style={styles.circle2} />
       <View style={styles.container}>
-        {/*         <Tiveo style={styles.appLogo} /> */}
+        <Tiveo style={styles.appLogo} />
         <Text style={styles.subtitle}>
           Trabajá a tu manera{"\n"}Nosotros te conectamos
         </Text>

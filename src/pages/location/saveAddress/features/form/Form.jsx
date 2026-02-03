@@ -26,7 +26,7 @@ const Form = ({ onSubmit }) => {
         onPress={handleSubmit}
       >
         <Text style={styles.saveAddress__form__textButton}>
-          Guardar direccion
+          Guardar dirección
         </Text>
       </Pressable>
     </View>

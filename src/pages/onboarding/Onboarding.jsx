@@ -7,6 +7,7 @@ import Photo from "./steps/photo/Photo";
 import Description from "./steps/description/Description";
 import Services from "./steps/services/Services";
 import { UserContext } from "../../context/UserContext";
+import { LocationContext } from "../../context/LocationContext";
 import * as FileSystem from "expo-file-system";
 import {
   getStorage,
@@ -26,6 +27,7 @@ import { TouchableOpacity } from "react-native";
 const Onboarding = ({ navigation, route }) => {
   const insets = useSafeAreaInsets();
   const { user } = useContext(UserContext);
+  const { location } = useContext(LocationContext);
   const params = route?.params ?? {};
   const { initialWorkerData, redirectTo } = params;
   const mode = params.mode === "edit" ? "edit" : "create";
@@ -94,7 +96,12 @@ const Onboarding = ({ navigation, route }) => {
     if (isEditMode) {
       navigation.goBack();
     } else {
-      navigation.navigate("Home");
+      // Si no hay location, navegar a Location, sino a Home
+      if (!location) {
+        navigation.navigate("Location");
+      } else {
+        navigation.navigate("Home");
+      }
     }
   };
 

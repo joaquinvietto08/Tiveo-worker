@@ -7,7 +7,7 @@ const GOOGLE_PLACES_API_KEY = "AIzaSyCcBYIbLnlMIzRijdTr01DXGCTNfPNKUc4";
 export const GooglePlacesInput = ({ ...props }) => {
   return (
     <GooglePlacesAutocomplete
-      placeholder="Buscar direccion"
+      placeholder="Buscar dirección"
       minLength={2}
       fetchDetails={true}
       query={{

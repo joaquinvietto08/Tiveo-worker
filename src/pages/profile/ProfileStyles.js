@@ -117,6 +117,22 @@ export const styles = StyleSheet.create({
     fontFamily: "Inter-Medium",
     color: colors.white,
   },
+  profile__helpButton: {
+    marginTop: 12,
+    width: "100%",
+    backgroundColor: colors.white,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 14,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: colors.lightGray,
+  },
+  profile__helpButtonText: {
+    fontSize: 16,
+    fontFamily: "Inter-Medium",
+    color: colors.black,
+  },
   profile__logoutButton: {
     marginTop: 24,
     width: "60%",

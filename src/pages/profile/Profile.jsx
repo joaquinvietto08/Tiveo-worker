@@ -197,6 +197,14 @@ const Profile = ({ navigation }) => {
         </TouchableOpacity>
 
         <TouchableOpacity
+          style={styles.profile__helpButton}
+          activeOpacity={0.8}
+          onPress={() => navigation.navigate("Support")}
+        >
+          <Text style={styles.profile__helpButtonText}>Ayuda</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
           style={styles.profile__logoutButton}
           activeOpacity={0.8}
           onPress={handleSignOut}

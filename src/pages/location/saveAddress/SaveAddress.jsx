@@ -135,7 +135,7 @@ const SaveAddress = ({ navigation, route }) => {
             </Pressable>
           </View>
           <View style={styles.saveAddress__container}>
-            <Text style={styles.saveAddress__title}>Nueva direccion</Text>
+            <Text style={styles.saveAddress__title}>Nueva dirección</Text>
           </View>
           <View style={styles.saveAddress__formContainer}>
             <View style={{ marginBottom: 20 }}>

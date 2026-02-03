@@ -95,7 +95,7 @@ const OptionList = ({ navigation, setShowLoading }) => {
   const db = getFirestore();
 
   const defaultOptions = [
-    { key: "1", name: "Usar ubicacion real" },
+    { key: "1", name: "Usar ubicación real" },
     { key: "2", name: "Seleccionar en el mapa" },
   ];
 
