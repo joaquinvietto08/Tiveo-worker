@@ -6,7 +6,7 @@ import { useNavigation } from "@react-navigation/native";
 import { translateStatus } from "../../../../utils/formatHelpers";
 import { colors } from "../../../../styles/globalStyles";
 
-const Header = ({ status }) => {
+const Header = ({ status, isWarranty }) => {
   const navigation = useNavigation();
 
   return (
@@ -19,7 +19,11 @@ const Header = ({ status }) => {
           <MaterialIcons name="arrow-back" size={24} color="#000" />
         </TouchableOpacity>
         <Text style={styles.currentWork__header__title}>
-          {status === "confirm"  || status === "starting" ? "Próximo trabajo" : "Trabajo activo"}
+          {isWarranty
+            ? "Reclamo de garantía"
+            : status === "confirm" || status === "starting"
+            ? "Próximo trabajo"
+            : "Trabajo activo"}
         </Text>
       </View>
 
@@ -27,7 +31,9 @@ const Header = ({ status }) => {
         <View
           style={[
             styles.currentWork__header__statusDot,
-            status === "going"
+            isWarranty
+              ? { backgroundColor: "#F6C23E" }
+              : status === "going"
               ? { backgroundColor: "#4E73DF" }
               : status === "on-progress"
               ? { backgroundColor: "#F6C23E" }
@@ -35,7 +41,7 @@ const Header = ({ status }) => {
           ]}
         />
         <Text style={styles.currentWork__header__statusText}>
-          {translateStatus(status).toLowerCase()}
+          {isWarranty ? "reclamo de garantía" : translateStatus(status).toLowerCase()}
         </Text>
       </View>
     </View>

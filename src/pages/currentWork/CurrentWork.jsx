@@ -24,6 +24,7 @@ const CurrentWork = ({ route }) => {
   const { activityId } = route.params;
   const { activities, setActivities } = useContext(UserContext);
   const activity = activities?.find((a) => a.id === activityId) || {};
+  const isWarranty = activity?.warranty === "claimed";
   const navigation = useNavigation();
   const [showCancelModal, setShowCancelModal] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -57,20 +58,34 @@ const CurrentWork = ({ route }) => {
         paddingBottom: insets.bottom,
       }}
     >
-      <ScrollView showsVerticalScrollIndicator={false}>
-        <Header status={activity.status} />
-        <Status status={activity.status} />
-        <Buttons activity={activity} />
+      <ScrollView
+        style={styles.currentWork__scrollView}
+        contentContainerStyle={styles.currentWork__scrollViewContent}
+        showsVerticalScrollIndicator={false}
+      >
+        <Header status={activity.status} isWarranty={isWarranty} />
+        {isWarranty ? (
+          <View style={styles.currentWork__warrantyBanner}>
+            <Text style={styles.currentWork__warrantyBannerText}>
+              Reclamo de garantía
+            </Text>
+          </View>
+        ) : (
+          <Status status={activity.status} />
+        )}
+        <Buttons activity={activity} isWarranty={isWarranty} />
         <Body activity={activity} />
 
-        {/* Botón Cancelar */}
-        <TouchableOpacity
-          onPress={() => setShowCancelModal(true)}
-          activeOpacity={0.7}
-          style={styles.currentWork__cancelBtn}
-        >
-          <Text style={styles.currentWork__cancelText}>Cancelar trabajo</Text>
-        </TouchableOpacity>
+        {/* Botón Cancelar (solo si no es garantía) */}
+        {!isWarranty && (
+          <TouchableOpacity
+            onPress={() => setShowCancelModal(true)}
+            activeOpacity={0.7}
+            style={styles.currentWork__cancelBtn}
+          >
+            <Text style={styles.currentWork__cancelText}>Cancelar trabajo</Text>
+          </TouchableOpacity>
+        )}
       </ScrollView>
 
       {/* Modal de confirmación */}

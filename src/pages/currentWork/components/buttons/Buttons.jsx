@@ -1,5 +1,11 @@
 import React, { useContext, useState } from "react";
-import { View, Text, TouchableOpacity, ActivityIndicator } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  ActivityIndicator,
+  Modal,
+} from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import { styles } from "./ButtonsStyles";
 import { UserContext } from "../../../../context/UserContext";
@@ -8,10 +14,35 @@ import { getFirestore, doc, updateDoc, serverTimestamp } from "firebase/firestor
 import { FIREBASE_APP } from "../../../../config/firebaseConfig";
 import { useNavigation } from "@react-navigation/native";
 
-const Buttons = ({ activity }) => {
+const Buttons = ({ activity, isWarranty }) => {
   const { activities, setActivities } = useContext(UserContext);
   const [loading, setLoading] = useState(false);
+  const [showSolveModal, setShowSolveModal] = useState(false);
+  const [solvingWarranty, setSolvingWarranty] = useState(false);
   const navigation = useNavigation();
+
+  const handleSolveWarrantyPress = () => setShowSolveModal(true);
+  const handleCancelSolve = () => setShowSolveModal(false);
+
+  const handleConfirmSolve = async () => {
+    if (!activity?.id) return;
+    setSolvingWarranty(true);
+    try {
+      const db = getFirestore(FIREBASE_APP);
+      const activityRef = doc(db, "activities", activity.id);
+      await updateDoc(activityRef, { warranty: "solved" });
+      const updatedActivities = activities.map((a) =>
+        a.id === activity.id ? { ...a, warranty: "solved" } : a
+      );
+      setActivities(updatedActivities);
+      setShowSolveModal(false);
+      navigation.goBack();
+    } catch (error) {
+      console.error("❌ Error al resolver garantía:", error);
+    } finally {
+      setSolvingWarranty(false);
+    }
+  };
 
   // --- Avanzar estado ---
   const handleNextStatus = async () => {
@@ -146,45 +177,67 @@ const Buttons = ({ activity }) => {
 
   return (
     <View style={styles.currentWork__buttons__container}>
-      {/* Botón principal (avanzar estado) */}
-      <TouchableOpacity
-        style={[
-          styles.currentWork__buttons__actionBtn,
-          { backgroundColor: actionData.color },
-        ]}
-        activeOpacity={0.85}
-        onPress={handleNextStatus}
-        disabled={loading}
-      >
-        <MaterialIcons name={actionData.icon} size={22} color={colors.white} />
-        <Text style={styles.currentWork__buttons__actionText}>
-          {actionData.text}
-        </Text>
-      </TouchableOpacity>
-
-      {/* Botón retroceder (solo si no estás en el primero) */}
-      {canGoBack && (
+      {isWarranty && (
         <TouchableOpacity
-          style={[
-            styles.currentWork__buttons__actionBtn,
-            { backgroundColor: colors.lightGray },
-          ]}
+          style={styles.currentWork__buttons__solveBtn}
           activeOpacity={0.85}
-          onPress={() => {
-            if (lockedByPayment) return;
-            handlePrevStatus();
-          }}
+          onPress={handleSolveWarrantyPress}
+          disabled={solvingWarranty}
         >
-          <MaterialIcons name="undo" size={22} color={colors.black} />
-          <Text
-            style={[
-              styles.currentWork__buttons__actionText,
-              { color: colors.black },
-            ]}
-          >
-            Volver al paso anterior
+          {solvingWarranty ? (
+            <ActivityIndicator color={colors.white} size="small" />
+          ) : (
+            <MaterialIcons name="check-circle" size={20} color={colors.white} />
+          )}
+          <Text style={styles.currentWork__buttons__solveBtnText}>
+            {solvingWarranty ? "Resolviendo..." : "Marcar como solucionado"}
           </Text>
         </TouchableOpacity>
+      )}
+
+      {!isWarranty && (
+        <>
+          {/* Botón principal (avanzar estado) */}
+          <TouchableOpacity
+            style={[
+              styles.currentWork__buttons__actionBtn,
+              { backgroundColor: actionData.color },
+            ]}
+            activeOpacity={0.85}
+            onPress={handleNextStatus}
+            disabled={loading}
+          >
+            <MaterialIcons name={actionData.icon} size={22} color={colors.white} />
+            <Text style={styles.currentWork__buttons__actionText}>
+              {actionData.text}
+            </Text>
+          </TouchableOpacity>
+
+          {/* Botón retroceder (solo si no estás en el primero) */}
+          {canGoBack && (
+            <TouchableOpacity
+              style={[
+                styles.currentWork__buttons__actionBtn,
+                { backgroundColor: colors.lightGray },
+              ]}
+              activeOpacity={0.85}
+              onPress={() => {
+                if (lockedByPayment) return;
+                handlePrevStatus();
+              }}
+            >
+              <MaterialIcons name="undo" size={22} color={colors.black} />
+              <Text
+                style={[
+                  styles.currentWork__buttons__actionText,
+                  { color: colors.black },
+                ]}
+              >
+                Volver al paso anterior
+              </Text>
+            </TouchableOpacity>
+          )}
+        </>
       )}
 
       {/* Botón de mensajes */}
@@ -200,6 +253,46 @@ const Buttons = ({ activity }) => {
         />
         <Text style={styles.currentWork__buttons__messageText}>Mensajes</Text>
       </TouchableOpacity>
+
+      {/* Modal confirmar marcar garantía como solucionada */}
+      <Modal
+        transparent
+        visible={showSolveModal}
+        animationType="fade"
+        onRequestClose={handleCancelSolve}
+      >
+        <View style={styles.currentWork__buttons__modalOverlay}>
+          <View style={styles.currentWork__buttons__modalCard}>
+            <Text style={styles.currentWork__buttons__modalTitle}>
+              Marcar como solucionado
+            </Text>
+            <Text style={styles.currentWork__buttons__modalMessage}>
+              ¿Estás seguro de que deseas marcar este reclamo de garantía como solucionado?
+            </Text>
+            <View style={styles.currentWork__buttons__modalButtonsRow}>
+              <TouchableOpacity
+                style={styles.currentWork__buttons__modalButtonCancel}
+                onPress={handleCancelSolve}
+                activeOpacity={0.9}
+              >
+                <Text style={styles.currentWork__buttons__modalButtonCancelText}>
+                  Cancelar
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.currentWork__buttons__modalButtonConfirm}
+                onPress={handleConfirmSolve}
+                activeOpacity={0.9}
+                disabled={solvingWarranty}
+              >
+                <Text style={styles.currentWork__buttons__modalButtonConfirmText}>
+                  Marcar como solucionado
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 };

@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useMemo } from "react";
 import {
   View,
   Text,
@@ -16,14 +16,32 @@ import Busy from "../../../../../../assets/svgs/worker/busy.svg";
 import Available from "../../../../../../assets/svgs/worker/available.svg";
 import { colors } from "../../../../../styles/globalStyles";
 import { getIcon } from "../../../../../utils/getIcons";
-import { translateService } from "../../../../../utils/formatHelpers";
+import {
+  translateService,
+  formatDate,
+  formatTime,
+} from "../../../../../utils/formatHelpers";
+import { getCurrentWorkActivities } from "../../currentWorkCard/getCurrentWorkActivities";
 
 const Schedules = ({ navigation }) => {
   const [selectedImage, setSelectedImage] = useState(null);
   const { activities } = useContext(UserContext);
 
-  const activeActivities = activities.filter(
-    (item) => item.status !== "done" && item.status !== "cancelled"
+  // Activas que no están ya en las cards de "trabajo actual" (en curso, próximos, garantía)
+  const currentWorkIds = useMemo(() => {
+    const current = getCurrentWorkActivities(activities);
+    return new Set(current.map((a) => a.id));
+  }, [activities]);
+
+  const activeActivities = useMemo(
+    () =>
+      activities.filter(
+        (item) =>
+          item.status !== "done" &&
+          item.status !== "cancelled" &&
+          !currentWorkIds.has(item.id)
+      ),
+    [activities, currentWorkIds]
   );
 
   const handleStartJob = async (activityId) => {
@@ -111,7 +129,9 @@ const Schedules = ({ navigation }) => {
                 style={styles.advanceSearch__footer__detailIcon}
               />
               <Text style={styles.schedules__momentScheduled}>
-                Martes 16 de junio 17:30 hs
+                {item.scheduledDateTime
+                  ? `${formatDate(item.scheduledDateTime)} ${formatTime(item.scheduledDateTime)} hs`
+                  : "Sin fecha programada"}
               </Text>
             </>
           )}

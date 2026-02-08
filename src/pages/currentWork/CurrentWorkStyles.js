@@ -6,6 +6,28 @@ export const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.background,
   },
+  currentWork__scrollView: {
+    flex: 1,
+  },
+  currentWork__scrollViewContent: {
+    flexGrow: 1,
+    paddingBottom: 48,
+  },
+  currentWork__warrantyBanner: {
+    backgroundColor: colors.white,
+    marginHorizontal: 16,
+    marginTop: 14,
+    borderRadius: 16,
+    paddingVertical: 16,
+    paddingHorizontal: 18,
+    elevation: 2,
+  },
+  currentWork__warrantyBannerText: {
+    fontFamily: "Inter-Medium",
+    fontSize: 15,
+    color: colors.gray,
+    textAlign: "center",
+  },
   currentWork__cancelBtn: {
     alignSelf: "center",
     marginTop: 40,
