@@ -198,8 +198,6 @@ const Payment = ({ route }) => {
           );
         }
       }
-      // Navegar a Home después de crear el pago
-      navigation.navigate("Home");
     } catch (e) {
       console.error("Error creando el pago", e);
     } finally {
