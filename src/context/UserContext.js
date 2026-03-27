@@ -99,10 +99,13 @@ export function UserProvider({ children }) {
       }
     };
 
-    // --- Escucha la colección "activities"
-    const unsubscribeActivity = onSnapshot(
+    // --- Escucha la colección "activities" filtrada por el worker actual
+    const activitiesQuery = query(
       collection(db, "activities"),
-      (snapshot) => {
+      where("worker.uid", "==", user.uid)
+    );
+
+    const unsubscribeActivity = onSnapshot(activitiesQuery, (snapshot) => {
         const activitiesData = snapshot.docs.map((doc) => {
           const data = doc.data();
           return {
@@ -122,29 +125,76 @@ export function UserProvider({ children }) {
       }
     );
 
-    // --- Escucha la colección "requests" excepto las cerradas
-    const requestsQuery = query(
+    // --- Escucha la colección "requests": open (todos) + direct (solo las asignadas a este worker)
+    const openRequestsQuery = query(
       collection(db, "requests"),
       where("status", "not-in", ["closed", "rejected", "cancelled"]),
+      where("type", "==", "open"),
       orderBy("status")
     );
 
-    const unsubscribeRequests = onSnapshot(requestsQuery, (snapshot) => {
-      const requestsData = snapshot.docs.map((doc) => {
-        const data = doc.data();
-        return {
-          id: doc.id,
+    const directRequestsQuery = query(
+      collection(db, "requests"),
+      where("status", "not-in", ["closed", "rejected", "cancelled"]),
+      where("type", "==", "direct"),
+      where("worker.workerId", "==", user.uid),
+      orderBy("status")
+    );
+
+    const mergeRequests = (openSnap, directSnap) => {
+      const byId = new Map();
+      (openSnap?.docs || []).forEach((d) => {
+        const data = d.data();
+        byId.set(d.id, {
+          id: d.id,
           ...data,
           scheduledDateTime: data?.scheduledDateTime?.toDate?.() || null,
-        };
+        });
       });
+      (directSnap?.docs || []).forEach((d) => {
+        const data = d.data();
+        byId.set(d.id, {
+          id: d.id,
+          ...data,
+          scheduledDateTime: data?.scheduledDateTime?.toDate?.() || null,
+        });
+      });
+      setRequests(Array.from(byId.values()));
+    };
 
-      setRequests(requestsData);
-      if (!loadedFlags.current.requests) {
+    let openSnapCache = null;
+    let directSnapCache = null;
+
+    let requestsOpenLoaded = false;
+    let requestsDirectLoaded = false;
+    const markRequestsLoaded = () => {
+      if (requestsOpenLoaded && requestsDirectLoaded && !loadedFlags.current.requests) {
         loadedFlags.current.requests = true;
         checkAllLoaded();
       }
+    };
+
+    const unsubscribeOpenRequests = onSnapshot(openRequestsQuery, (snapshot) => {
+      openSnapCache = snapshot;
+      requestsOpenLoaded = true;
+      mergeRequests(openSnapCache, directSnapCache || { docs: [] });
+      markRequestsLoaded();
     });
+
+    const unsubscribeDirectRequests = onSnapshot(
+      directRequestsQuery,
+      (snapshot) => {
+        directSnapCache = snapshot;
+        requestsDirectLoaded = true;
+        mergeRequests(openSnapCache || { docs: [] }, directSnapCache);
+        markRequestsLoaded();
+      }
+    );
+
+    const unsubscribeRequests = () => {
+      unsubscribeOpenRequests();
+      unsubscribeDirectRequests();
+    };
 
     // --- Escucha las postulaciones del trabajador actual (no rechazadas)
     const postulationsQuery = query(
