@@ -67,13 +67,14 @@ export const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     marginTop: "auto",
+    marginBottom: 40,
   },
   photo__backButton: {
     borderWidth: 1,
     borderColor: colors.black,
     borderRadius: 8,
     paddingVertical: 12,
-    paddingHorizontal: 30,
+    paddingHorizontal: 35,
   },
   photo__backButtonText: {
     color: colors.black,
@@ -84,7 +85,7 @@ export const styles = StyleSheet.create({
     backgroundColor: colors.black,
     borderRadius: 8,
     paddingVertical: 14,
-    paddingHorizontal: 70,
+    paddingHorizontal: 65,
   },
   photo__buttonText: {
     color: colors.white,

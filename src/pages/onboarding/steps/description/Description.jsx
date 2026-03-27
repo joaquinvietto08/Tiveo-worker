@@ -2,7 +2,8 @@ import React from "react";
 import { View, Text, TextInput, TouchableOpacity } from "react-native";
 import { styles } from "./DescriptionStyles";
 
-const Description = ({ workerData, setWorkerData, onNext, onBack }) => {
+const Description = ({ workerData, setWorkerData, onNext, onBack, mode = "create" }) => {
+  const isEditMode = mode === "edit";
 
   const handleContinue = () => {
     if (workerData.description.trim()) {
@@ -12,7 +13,9 @@ const Description = ({ workerData, setWorkerData, onNext, onBack }) => {
 
   return (
     <View style={styles.description__mainContainer}>
-      <Text style={styles.description__title}>Crear perfil de trabajador</Text>
+      <Text style={styles.description__title}>
+        {isEditMode ? "Editar perfil de trabajador" : "Crear perfil de trabajador"}
+      </Text>
       <Text style={styles.description__step}>Paso 3 de 4</Text>
 
       <View style={styles.description__progressContainer}>

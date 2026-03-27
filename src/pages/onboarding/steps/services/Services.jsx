@@ -1,101 +1,115 @@
-import React, { useState } from "react";
-import { View, Text, TouchableOpacity, FlatList } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import React, { useState, useEffect } from "react";
+import { View, Text, TouchableOpacity, FlatList, ActivityIndicator } from "react-native";
 import { styles } from "./ServicesStyles";
+import { servicesData } from "../../../../utils/servicesData";
+import { translateService } from "../../../../utils/formatHelpers";
+import { getIcon } from "../../../../utils/getIcons";
+import { colors } from "../../../../styles/globalStyles";
 
-const mockServices = [
-  { id: "1", name: "Electricidad" },
-  { id: "2", name: "Plomería" },
-  { id: "3", name: "Pintura" },
-  { id: "4", name: "Carpintería" },
-  { id: "5", name: "Limpieza" },
-  { id: "6", name: "Jardinería" },
-];
+const Services = ({ workerData, setWorkerData, onBack, onFinish, loading, mode = "create" }) => {
+  const isEditMode = mode === "edit";
+  const [selected, setSelected] = useState(
+    Array.isArray(workerData.services) ? workerData.services : []
+  );
 
-const OnboardingServices = ({ navigation, route }) => {
-  const insets = useSafeAreaInsets();
-  const [selectedServices, setSelectedServices] = useState([]);
-  const { name, lastName, workerName, photo, description } = route.params || {};
+  useEffect(() => {
+    setWorkerData((prev) => ({ ...prev, services: selected }));
+  }, [selected]);
 
-  const handleSelect = (id) => {
-    if (selectedServices.includes(id)) {
-      setSelectedServices(selectedServices.filter((s) => s !== id));
+  const handleToggle = (service) => {
+    if (selected.includes(service)) {
+      setSelected(selected.filter((s) => s !== service));
     } else {
-      setSelectedServices([...selectedServices, id]);
+      setSelected([...selected, service]);
     }
   };
 
-  const handleFinish = () => {
-    const profileData = {
-      name,
-      lastName,
-      workerName,
-      photo,
-      description,
-      services: selectedServices,
-    };
-    console.log("Perfil final:", profileData);
-    navigation.replace("Home"); // o cualquier pantalla principal que tengas
+  const renderService = ({ item }) => {
+    const isSelected = selected.includes(item.name);
+    const label = translateService(item.name) || item.name;
+    const Icon = getIcon(item.name); // 👈 obtenemos el ícono correspondiente
+
+    return (
+      <TouchableOpacity
+        style={[
+          styles.services__card,
+          isSelected && styles.services__cardSelected,
+        ]}
+        onPress={() => handleToggle(item.name)}
+        activeOpacity={0.8}
+      >
+        <View style={styles.services__iconContainer}>
+          {Icon ? <Icon width={28} height={28} fill={colors.black} /> : null}
+        </View>
+        <Text
+          style={[
+            styles.services__label,
+            isSelected && styles.services__labelSelected,
+          ]}
+        >
+          {label}
+        </Text>
+      </TouchableOpacity>
+    );
   };
 
   return (
-    <View
-      style={[
-        styles.onboardingServices__mainContainer,
-        { paddingTop: insets.top + 20, paddingBottom: insets.bottom + 20 },
-      ]}
-    >
-      <Text style={styles.onboardingServices__title}>Crear perfil de trabajador</Text>
-      <Text style={styles.onboardingServices__step}>Paso 4 de 4</Text>
+    <View style={styles.services__mainContainer}>
+      <Text style={styles.services__title}>
+        {isEditMode ? "Editar perfil de trabajador" : "Crear perfil de trabajador"}
+      </Text>
+      <Text style={styles.services__step}>Paso 4 de 4</Text>
 
-      <View style={styles.onboardingServices__progressContainer}>
-        <View style={styles.onboardingServices__progressBar} />
+      <View style={styles.services__progressContainer}>
+        <View style={styles.services__progressBar} />
       </View>
 
-      <Text style={styles.onboardingServices__sectionTitle}>Seleccioná tus servicios</Text>
-      <Text style={styles.onboardingServices__sectionSubtitle}>
-        Elegí los rubros en los que querés ofrecer tus servicios
+      <Text style={styles.services__sectionTitle}>Categorías de servicio</Text>
+      <Text style={styles.services__sectionSubtitle}>
+        Selecciona los servicios que ofreces
       </Text>
 
       <FlatList
-        data={mockServices}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => {
-          const isSelected = selectedServices.includes(item.id);
-          return (
-            <TouchableOpacity
-              style={[
-                styles.onboardingServices__option,
-                isSelected && styles.onboardingServices__optionSelected,
-              ]}
-              onPress={() => handleSelect(item.id)}
-            >
-              <Text
-                style={[
-                  styles.onboardingServices__optionText,
-                  isSelected && styles.onboardingServices__optionTextSelected,
-                ]}
-              >
-                {item.name}
-              </Text>
-            </TouchableOpacity>
-          );
+        data={servicesData}
+        keyExtractor={(item) => item.key}
+        renderItem={renderService}
+        numColumns={2}
+        columnWrapperStyle={{ justifyContent: "space-between", gap: 10 }}
+        contentContainerStyle={{
+          paddingHorizontal: 2,
+          paddingTop: 2,
         }}
-        contentContainerStyle={{ paddingBottom: 20 }}
+        showsVerticalScrollIndicator={false}
       />
 
-      <TouchableOpacity
-        style={[
-          styles.onboardingServices__button,
-          selectedServices.length === 0 && { backgroundColor: "#ccc" },
-        ]}
-        onPress={handleFinish}
-        disabled={selectedServices.length === 0}
-      >
-        <Text style={styles.onboardingServices__buttonText}>Finalizar</Text>
-      </TouchableOpacity>
+      <Text style={styles.services__helperText}>
+        Puedes seleccionar múltiples categorías
+      </Text>
+
+      <View style={styles.services__buttonsRow}>
+        <TouchableOpacity style={styles.services__backButton} onPress={onBack}>
+          <Text style={styles.services__backButtonText}>Atrás</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={[
+            styles.services__button,
+            (selected.length === 0 || loading) && { backgroundColor: "#ccc" },
+          ]}
+          onPress={!loading ? onFinish : null}
+          disabled={selected.length === 0 || loading}
+        >
+          {loading ? (
+            <ActivityIndicator size="small" color="#fff" />
+          ) : (
+            <Text style={styles.services__buttonText}>
+              {isEditMode ? "Guardar cambios" : "Crear perfil"}
+            </Text>
+          )}
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
 
-export default OnboardingServices;
+export default Services;

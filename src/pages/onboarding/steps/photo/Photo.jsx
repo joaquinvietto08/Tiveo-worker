@@ -2,7 +2,8 @@ import { View, Text, TouchableOpacity, Image } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { styles } from "./PhotoStyles";
 
-const Photo = ({ workerData, setWorkerData, onNext, onBack }) => {
+const Photo = ({ workerData, setWorkerData, onNext, onBack, mode = "create" }) => {
+  const isEditMode = mode === "edit";
 
   const handlePickPhoto = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -22,7 +23,9 @@ const Photo = ({ workerData, setWorkerData, onNext, onBack }) => {
 
   return (
     <View style={styles.photo__mainContainer}>
-      <Text style={styles.photo__title}>Crear perfil de trabajador</Text>
+      <Text style={styles.photo__title}>
+        {isEditMode ? "Editar perfil de trabajador" : "Crear perfil de trabajador"}
+      </Text>
       <Text style={styles.photo__step}>Paso 2 de 4</Text>
 
       <View style={styles.photo__progressContainer}>

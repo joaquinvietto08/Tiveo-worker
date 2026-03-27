@@ -1,0 +1,246 @@
+import React, { useState, useContext, useMemo } from "react";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Image,
+  ScrollView,
+  Modal,
+} from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { styles } from "./SchedulesStyles";
+import { UserContext } from "../../../../../context/UserContext";
+import { getFirestore, doc, updateDoc } from "firebase/firestore";
+import { FIREBASE_APP } from "../../../../../config/firebaseConfig";
+import Busy from "../../../../../../assets/svgs/worker/busy.svg";
+import Available from "../../../../../../assets/svgs/worker/available.svg";
+import { colors } from "../../../../../styles/globalStyles";
+import { getIcon } from "../../../../../utils/getIcons";
+import {
+  translateService,
+  formatDate,
+  formatTime,
+} from "../../../../../utils/formatHelpers";
+import { getCurrentWorkActivities } from "../../currentWorkCard/getCurrentWorkActivities";
+
+const Schedules = ({ navigation }) => {
+  const [selectedImage, setSelectedImage] = useState(null);
+  const { activities } = useContext(UserContext);
+
+  // Activas que no están ya en las cards de "trabajo actual" (en curso, próximos, garantía)
+  const currentWorkIds = useMemo(() => {
+    const current = getCurrentWorkActivities(activities);
+    return new Set(current.map((a) => a.id));
+  }, [activities]);
+
+  const activeActivities = useMemo(
+    () =>
+      activities.filter(
+        (item) =>
+          item.status !== "done" &&
+          item.status !== "cancelled" &&
+          !currentWorkIds.has(item.id)
+      ),
+    [activities, currentWorkIds]
+  );
+
+  const handleStartJob = async (activityId) => {
+    try {
+      const db = getFirestore(FIREBASE_APP);
+      const activityRef = doc(db, "activities", activityId);
+      await updateDoc(activityRef, {
+        status: "starting",
+      });
+      navigation.navigate("CurrentWork", { activityId });
+      console.log(`✅ Trabajo ${activityId} marcado como "starting"`);
+    } catch (error) {
+      console.error("❌ Error al actualizar estado:", error);
+    }
+  };
+
+  // 🔽 Ordenar por prioridad
+  const sortedActivities = [...activeActivities].sort((a, b) => {
+    // 1️⃣ Prioridad: trabajos "now"
+    if (a.moment === "now" && b.moment !== "now") return -1;
+    if (a.moment !== "now" && b.moment === "now") return 1;
+
+    // 2️⃣ Si ambos son "scheduled", ordenar por fecha más próxima
+    if (a.moment === "scheduled" && b.moment === "scheduled") {
+      const dateA = new Date(a.scheduledDateTime || 0);
+      const dateB = new Date(b.scheduledDateTime || 0);
+      return dateA - dateB;
+    }
+
+    return 0;
+  });
+
+  const renderCard = (item) => {
+    const hasDescription = item.description && item.description.trim() !== "";
+    const hasServices = item.services?.length > 0;
+    const hasImages = item.images?.length > 0;
+
+    return (
+      <View key={item.id} style={styles.schedules__card}>
+        {/* Descripción */}
+        <Text
+          style={
+            hasDescription
+              ? styles.schedules__title
+              : [styles.schedules__title, styles.schedules__title__italic]
+          }
+        >
+          {hasDescription ? item.description : "Sin descripción"}
+        </Text>
+
+        {/* Cliente */}
+        <Text style={styles.schedules__client}>
+          {item.client?.displayName || "Cliente desconocido"}
+        </Text>
+
+        {/* Dirección */}
+        <Text style={styles.schedules__sectionLabel}>Dirección</Text>
+        <View style={styles.schedules__iconText}>
+          <Ionicons name="location-sharp" size={18} color="#000" />
+          <Text style={styles.schedules__text}>
+            {item.address?.address || "No disponible"}
+            {item.address?.floor ? `, ${item.address.floor}` : ""}
+          </Text>
+        </View>
+
+        {/* Fecha y hora */}
+        <Text style={styles.schedules__sectionLabel}>Fecha y hora</Text>
+        <View style={styles.schedules__momentRow}>
+          {item.moment === "now" ? (
+            <>
+              <Available
+                height={22}
+                width={22}
+                fill={colors.primary}
+                style={styles.advanceSearch__footer__detailIcon}
+              />
+              <Text style={styles.schedules__momentNow}>Ahora mismo</Text>
+            </>
+          ) : (
+            <>
+              <Busy
+                height={22}
+                width={22}
+                fill={colors.black}
+                style={styles.advanceSearch__footer__detailIcon}
+              />
+              <Text style={styles.schedules__momentScheduled}>
+                {item.scheduledDateTime
+                  ? `${formatDate(item.scheduledDateTime)} ${formatTime(item.scheduledDateTime)} hs`
+                  : "Sin fecha programada"}
+              </Text>
+            </>
+          )}
+        </View>
+
+        {/* Categorías */}
+        {hasServices && (
+          <View style={styles.schedules__servicesContainer}>
+            <Text style={styles.schedules__sectionLabel}>Categorías</Text>
+            <View style={styles.schedules__chipsRow}>
+              {item.services.map((srv, i) => {
+                const ServiceIcon = getIcon(srv);
+                return (
+                  <View key={i} style={styles.schedules__chip}>
+                    <ServiceIcon width={16} height={16} />
+                    <Text style={styles.schedules__chipText}>
+                      {translateService(srv)}
+                    </Text>
+                  </View>
+                );
+              })}
+            </View>
+          </View>
+        )}
+
+        {/* Imágenes del cliente */}
+        {hasImages && (
+          <View style={styles.schedules__imagesSection}>
+            <Text style={styles.schedules__sectionLabel}>
+              Imágenes del cliente
+            </Text>
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              style={styles.schedules__imagesContainer}
+            >
+              {item.images.map((uri, idx) => (
+                <TouchableOpacity
+                  key={idx}
+                  onPress={() => setSelectedImage(uri)}
+                  activeOpacity={0.8}
+                >
+                  <Image
+                    source={{ uri }}
+                    style={styles.schedules__imageThumb}
+                  />
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+          </View>
+        )}
+
+        {/* Botones */}
+        <View style={styles.schedules__buttonsRow}>
+          <TouchableOpacity
+            style={styles.schedules__buttonDetails}
+            onPress={() =>
+              navigation?.navigate("ActivityDetail", { activityId: item.id })
+            }
+          >
+            <Text style={styles.schedules__buttonDetailsText}>
+              Ver detalles
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.schedules__buttonStart}
+            onPress={() => handleStartJob(item.id)}
+          >
+            <Text style={styles.schedules__buttonStartText}>
+              Comenzar trabajo
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    );
+  };
+
+  return (
+    <ScrollView
+      style={styles.schedules__scroll}
+      contentContainerStyle={styles.schedules__container}
+      showsVerticalScrollIndicator={false}
+    >
+      {sortedActivities?.length > 0 ? (
+        sortedActivities.map((item) => renderCard(item))
+      ) : (
+        <Text style={styles.schedules__emptyText}>
+          No hay trabajos programados
+        </Text>
+      )}
+
+      {/* Modal de preview imagen (por si lo necesitás más adelante) */}
+      <Modal visible={!!selectedImage} transparent animationType="fade">
+        <View style={styles.schedules__modalOverlay}>
+          <TouchableOpacity
+            style={styles.schedules__modalOverlay}
+            onPress={() => setSelectedImage(null)}
+            activeOpacity={1}
+          >
+            <Image
+              source={{ uri: selectedImage }}
+              style={styles.schedules__modalImage}
+            />
+          </TouchableOpacity>
+        </View>
+      </Modal>
+    </ScrollView>
+  );
+};
+
+export default Schedules;

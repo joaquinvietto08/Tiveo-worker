@@ -1,0 +1,300 @@
+import React, { useContext, useState } from "react";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  ActivityIndicator,
+  Modal,
+} from "react-native";
+import { MaterialIcons } from "@expo/vector-icons";
+import { styles } from "./ButtonsStyles";
+import { UserContext } from "../../../../context/UserContext";
+import { colors } from "../../../../styles/globalStyles";
+import { getFirestore, doc, updateDoc, serverTimestamp } from "firebase/firestore";
+import { FIREBASE_APP } from "../../../../config/firebaseConfig";
+import { useNavigation } from "@react-navigation/native";
+
+const Buttons = ({ activity, isWarranty }) => {
+  const { activities, setActivities } = useContext(UserContext);
+  const [loading, setLoading] = useState(false);
+  const [showSolveModal, setShowSolveModal] = useState(false);
+  const [solvingWarranty, setSolvingWarranty] = useState(false);
+  const navigation = useNavigation();
+
+  const handleSolveWarrantyPress = () => setShowSolveModal(true);
+  const handleCancelSolve = () => setShowSolveModal(false);
+
+  const handleConfirmSolve = async () => {
+    if (!activity?.id) return;
+    setSolvingWarranty(true);
+    try {
+      const db = getFirestore(FIREBASE_APP);
+      const activityRef = doc(db, "activities", activity.id);
+      await updateDoc(activityRef, { warranty: "solved" });
+      const updatedActivities = activities.map((a) =>
+        a.id === activity.id ? { ...a, warranty: "solved" } : a
+      );
+      setActivities(updatedActivities);
+      setShowSolveModal(false);
+      navigation.goBack();
+    } catch (error) {
+      console.error("❌ Error al resolver garantía:", error);
+    } finally {
+      setSolvingWarranty(false);
+    }
+  };
+
+  // --- Avanzar estado ---
+  const handleNextStatus = async () => {
+    // Si el trabajo ya está finalizado, navegar a la pantalla de cobro
+    if (activity.status === "done") {
+      navigation.navigate("Payment", { activity });
+      return;
+    }
+    const nextStatusMap = {
+      starting: "going",
+      confirm: "going",
+      going: "on-progress",
+      "on-progress": "done",
+      done: "done",
+    };
+
+    const updatedStatus = nextStatusMap[activity.status] || "confirm";
+    setLoading(true);
+
+    try {
+      const db = getFirestore(FIREBASE_APP); // ✅ instancia de Firestore
+      const activityRef = doc(db, "activities", activity.id);
+      const updatePayload =
+        updatedStatus === "on-progress"
+          ? { status: updatedStatus, startedAt: serverTimestamp() }
+          : { status: updatedStatus };
+      await updateDoc(activityRef, updatePayload);
+      console.log(`✅ Estado actualizado a: ${updatedStatus}`);
+
+      // Actualizamos también el contexto local
+      const updatedActivities = activities.map((a) =>
+        a.id === activity.id
+          ? {
+              ...a,
+              status: updatedStatus,
+              ...(updatedStatus === "on-progress" && { startedAt: new Date() }),
+            }
+          : a
+      );
+      setActivities(updatedActivities);
+    } catch (error) {
+      console.error("❌ Error al actualizar el estado:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // --- Retroceder estado ---
+  const handlePrevStatus = async () => {
+    const prevStatusMap = {
+      "on-progress": "going",
+      going: "confirm",
+      done: "on-progress",
+    };
+
+    const updatedStatus = prevStatusMap[activity.status] || "confirm";
+    setLoading(true);
+
+    try {
+      const db = getFirestore(FIREBASE_APP); // ✅ misma instancia
+      const activityRef = doc(db, "activities", activity.id);
+      const updatePayload =
+        updatedStatus === "on-progress"
+          ? { status: updatedStatus, startedAt: serverTimestamp() }
+          : { status: updatedStatus };
+      await updateDoc(activityRef, updatePayload);
+      console.log(`✅ Estado retrocedido a: ${updatedStatus}`);
+
+      const updatedActivities = activities.map((a) =>
+        a.id === activity.id
+          ? {
+              ...a,
+              status: updatedStatus,
+              ...(updatedStatus === "on-progress" && { startedAt: new Date() }),
+            }
+          : a
+      );
+      setActivities(updatedActivities);
+    } catch (error) {
+      console.error("❌ Error al retroceder el estado:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // --- Configuración visual del botón principal ---
+  const getActionButtonData = () => {
+    switch (activity.status) {
+      case "confirm":
+        return {
+          text: "Marcar como en camino",
+          icon: "directions-walk",
+          color: "#4E73DF",
+        };
+      case "starting":
+        return {
+          text: "Marcar como en camino",
+          icon: "directions-walk",
+          color: "#4E73DF",
+        };
+      case "going":
+        return {
+          text: "Marcar como trabajando",
+          icon: "handyman",
+          color: "#F6C23E",
+        };
+      case "on-progress":
+        return {
+          text: "Marcar como completado",
+          icon: "check",
+          color: colors.green,
+        };
+      default:
+        return activity.status === "done"
+          ? {
+              text: "Cobrar trabajo",
+              icon: "attach-money",
+              color: colors.primary,
+            }
+          : {
+              text: "Marcar como en camino",
+              icon: "directions-walk",
+              color: "#4E73DF",
+            };
+    }
+  };
+
+  const actionData = getActionButtonData();
+  const lockedByPayment = activity?.paymentStatus === "created";
+  const canGoBack =
+    activity.status !== "confirm" && activity.status !== "starting" && !lockedByPayment;
+
+  return (
+    <View style={styles.currentWork__buttons__container}>
+      {isWarranty && (
+        <TouchableOpacity
+          style={styles.currentWork__buttons__solveBtn}
+          activeOpacity={0.85}
+          onPress={handleSolveWarrantyPress}
+          disabled={solvingWarranty}
+        >
+          {solvingWarranty ? (
+            <ActivityIndicator color={colors.white} size="small" />
+          ) : (
+            <MaterialIcons name="check-circle" size={20} color={colors.white} />
+          )}
+          <Text style={styles.currentWork__buttons__solveBtnText}>
+            {solvingWarranty ? "Resolviendo..." : "Marcar como solucionado"}
+          </Text>
+        </TouchableOpacity>
+      )}
+
+      {!isWarranty && (
+        <>
+          {/* Botón principal (avanzar estado) */}
+          <TouchableOpacity
+            style={[
+              styles.currentWork__buttons__actionBtn,
+              { backgroundColor: actionData.color },
+            ]}
+            activeOpacity={0.85}
+            onPress={handleNextStatus}
+            disabled={loading}
+          >
+            <MaterialIcons name={actionData.icon} size={22} color={colors.white} />
+            <Text style={styles.currentWork__buttons__actionText}>
+              {actionData.text}
+            </Text>
+          </TouchableOpacity>
+
+          {/* Botón retroceder (solo si no estás en el primero) */}
+          {canGoBack && (
+            <TouchableOpacity
+              style={[
+                styles.currentWork__buttons__actionBtn,
+                { backgroundColor: colors.lightGray },
+              ]}
+              activeOpacity={0.85}
+              onPress={() => {
+                if (lockedByPayment) return;
+                handlePrevStatus();
+              }}
+            >
+              <MaterialIcons name="undo" size={22} color={colors.black} />
+              <Text
+                style={[
+                  styles.currentWork__buttons__actionText,
+                  { color: colors.black },
+                ]}
+              >
+                Volver al paso anterior
+              </Text>
+            </TouchableOpacity>
+          )}
+        </>
+      )}
+
+      {/* Botón de mensajes */}
+      <TouchableOpacity
+        style={styles.currentWork__buttons__messageBtn}
+        activeOpacity={0.85}
+        onPress={() => navigation.navigate("Messages", { activity })}
+      >
+        <MaterialIcons
+          name="chat-bubble-outline"
+          size={20}
+          color={colors.white}
+        />
+        <Text style={styles.currentWork__buttons__messageText}>Mensajes</Text>
+      </TouchableOpacity>
+
+      {/* Modal confirmar marcar garantía como solucionada */}
+      <Modal
+        transparent
+        visible={showSolveModal}
+        animationType="fade"
+        onRequestClose={handleCancelSolve}
+      >
+        <View style={styles.currentWork__buttons__modalOverlay}>
+          <View style={styles.currentWork__buttons__modalCard}>
+            <Text style={styles.currentWork__buttons__modalTitle}>
+              Marcar como solucionado
+            </Text>
+            <Text style={styles.currentWork__buttons__modalMessage}>
+              ¿Estás seguro de que deseas marcar este reclamo de garantía como solucionado?
+            </Text>
+            <View style={styles.currentWork__buttons__modalButtonsRow}>
+              <TouchableOpacity
+                style={styles.currentWork__buttons__modalButtonCancel}
+                onPress={handleCancelSolve}
+                activeOpacity={0.9}
+              >
+                <Text style={styles.currentWork__buttons__modalButtonCancelText}>
+                  Cancelar
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.currentWork__buttons__modalButtonConfirm}
+                onPress={handleConfirmSolve}
+                activeOpacity={0.9}
+                disabled={solvingWarranty}
+              >
+                <Text style={styles.currentWork__buttons__modalButtonConfirmText}>
+                  Marcar como solucionado
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+    </View>
+  );
+};
+
+export default Buttons;
